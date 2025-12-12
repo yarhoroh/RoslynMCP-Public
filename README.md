@@ -1,9 +1,9 @@
 <h1>
-  <img src="icon.png" alt="" width="110" height="100" align="center"> RoslynMCP
+  <img src="https://github.com/yarhoroh/RoslynMCP-Public/raw/main/icon.png" alt="" width="110" height="100" align="center"> RoslynMCP
 </h1>
 
-<p align="center">
-  MCP server that connects AI assistants to Visual Studio's Roslyn compiler for <strong>100% accurate C# code analysis</strong>.
+<p>
+MCP server that connects AI assistants to Visual Studio's Roslyn compiler for <strong>100% accurate C# code analysis</strong>.
 </p>
 
 > **Platform:** Windows only | **Language:** C# only
