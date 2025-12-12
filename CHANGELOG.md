@@ -2,7 +2,8 @@
 
 All notable changes to RoslynMCP will be documented in this file.
 
-## [1.7.0] - 2024-11-01
+### v1.10.0
+- **Fixed:** `reload_file` now works correctly (was failing with "TryApplyChanges cannot be called from a background thread")
 
 ### Initial Release
 - Basic MCP server functionality

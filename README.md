@@ -64,6 +64,9 @@ AI assistants typically use text-based search (grep) which produces false positi
 
 RoslynMCP provides **46 Roslyn-powered tools** including:
 
+### v1.10.0
+- **Fixed:** `reload_file` now works correctly (was failing with "TryApplyChanges cannot be called from a background thread")
+
 - **Navigation:** Find references, definitions, implementations, callers/callees
 - **Analysis:** Type info, class hierarchy, code metrics, data flow
 - **Diagnostics:** Real-time errors, warnings, async issues, performance problems
