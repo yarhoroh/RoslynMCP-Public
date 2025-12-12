@@ -1,6 +1,10 @@
-# RoslynMCP
+<h1>
+  <img src="icon.png" alt="" width="110" height="100" align="center"> RoslynMCP
+</h1>
 
-MCP server that connects AI assistants to Visual Studio's Roslyn compiler for **100% accurate C# code analysis**.
+<p align="center">
+  MCP server that connects AI assistants to Visual Studio's Roslyn compiler for <strong>100% accurate C# code analysis</strong>.
+</p>
 
 > **Platform:** Windows only | **Language:** C# only
 
@@ -62,15 +66,21 @@ AI assistants typically use text-based search (grep) which produces false positi
 
 ## Features
 
-RoslynMCP provides **46 Roslyn-powered tools** including:
+### v1.11.0
+- **New:** `get_completions` - Get code completion suggestions at any position (like IntelliSense)
+- **New:** `get_signature_help` - Get method signature and parameter info during calls
+- **New:** `apply_rename` - Rename symbols across entire solution with Roslyn accuracy
 
 ### v1.10.0
 - **Fixed:** `reload_file` now works correctly (was failing with "TryApplyChanges cannot be called from a background thread")
 
+RoslynMCP provides **49 Roslyn-powered tools** including:
+
 - **Navigation:** Find references, definitions, implementations, callers/callees
 - **Analysis:** Type info, class hierarchy, code metrics, data flow
 - **Diagnostics:** Real-time errors, warnings, async issues, performance problems
-- **Refactoring:** Rename preview, impact analysis, extract method feasibility
+- **Refactoring:** Rename preview, apply rename, impact analysis, extract method feasibility
+- **Code Intelligence:** Completions, signature help
 
 ## Troubleshooting
 
