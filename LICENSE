@@ -35,7 +35,7 @@ URL for them above, as well as copies of any plain-text lines
 beginning with `Required Notice:` that the licensor provided
 with the software.  For example:
 
-> Required Notice: Copyright Yaroslav Horokhov (https://ko-fi.com/yaroslavhorokhov)
+> Required Notice: Copyright Yaroslav Horokhov (https://github.com/yarhoroh)
 
 ## Changes and New Works License
 
@@ -134,9 +134,10 @@ of your licenses.
 
 ## Commercial Licensing
 
-For commercial use of RoslynMCP, please contact:
+This software is free for non-commercial use.
+For commercial use, licensing, and pricing inquiries, please contact:
 
-- Ko-fi: https://ko-fi.com/yaroslavhorokhov
+- Email: gorohov.game@gmail.com
 - GitHub: https://github.com/yarhoroh
 
 Copyright (c) 2024-2025 Yaroslav Horokhov
