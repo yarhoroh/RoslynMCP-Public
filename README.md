@@ -55,7 +55,7 @@ AI assistants typically use text-based search (grep) which produces false positi
 
 ## Installation
 
-1. Install RoslynMCP from [Visual Studio Marketplace](https://marketplace.visualstudio.com/)
+1. Install RoslynMCP from [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=YaroslavHorokhov.RoslynMcp/)
 2. Open your C# solution in Visual Studio
 3. Go to **View → Other Windows → RoslynMCP**
 4. Copy the configuration for your AI assistant
@@ -114,6 +114,6 @@ RoslynMCP provides **50+ Roslyn-powered tools**:
 
 **PolyForm Noncommercial 1.0.0** — Free for personal and non-commercial use.
 
-Commercial use requires a separate license. See [LICENSE](LICENSE) for details.
+Commercial use requires a separate license. See [LICENSE](https://github.com/yarhoroh/RoslynMCP-Public/blob/main/LICENSE) for details.
 
 For commercial licensing, contact: [ko-fi.com/yaroslavhorokhov](https://ko-fi.com/yaroslavhorokhov)
