@@ -62,6 +62,10 @@ AI assistants typically use text-based search (grep) which produces false positi
 
 ## Features
 
+### v1.14.0
+- **Optimized:** Reduced AI context usage (from ~40K to ~33K tokens) by streamlining tool descriptions
+- **Removed:** `change_scope` (use `impact_analysis`), `find_circular_dependencies`, `list_refactoring_services` - rarely used tools
+
 ### v1.13.2
 - **New:** `extract_interface` - Extract interface from class for DI/testability. Generates `IClassName.cs` and adds interface implementation to class
 - **New:** `organize_usings` - Sort and remove unused using directives. Roslyn-powered cleanup with CS8019/CS0105 diagnostics
@@ -94,7 +98,7 @@ RoslynMCP provides **50+ Roslyn-powered tools**:
 | ***🧠 Understanding*** | `understand_type`, `understand_method`, `get_type_info`, `get_type_members`, `get_method_body`, `get_class_hierarchy` |
 | ***📁 Structure*** | `get_solution_structure`, `get_project_structure`, `get_file_outline`, `get_types_in_file`, `find_entry_points`, `get_dependency_graph` |
 | ***🩺 Diagnostics*** | `get_errors`, `get_warnings`, `validate_text`, `find_async_issues`, `find_performance_issues`, `find_unused_code` |
-| ***🔧 Refactoring*** | `preview_rename`, `apply_rename`, `extract_interface`, `organize_usings`, `impact_analysis`, `change_scope`, `preview_extract_method`, `suggest_refactorings` |
+| ***🔧 Refactoring*** | `preview_rename`, `apply_rename`, `extract_interface`, `organize_usings`, `impact_analysis`, `preview_extract_method`, `suggest_refactorings` |
 | ***💡 IntelliSense*** | `get_quick_fixes`, `get_overloads`, `get_xml_documentation` |
 | ***🔎 Search*** | `find_attribute_usages`, `find_event_subscribers`, `find_extension_methods`, `find_tests_for_type`, `text_search` |
 | ***📊 Metrics*** | `get_code_metrics`, `analyze_data_flow`, `get_full_context`, `get_constructor_parameters` |
