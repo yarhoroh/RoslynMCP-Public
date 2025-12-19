@@ -62,6 +62,10 @@ AI assistants typically use text-based search (grep) which produces false positi
 
 ## Features
 
+### v1.14.1
+- **Fixed:** Codex model compatibility issues
+- **Optimized:** Reduced AI context usage (from ~33K to ~29K tokens)
+ 
 ### v1.14.0
 - **Optimized:** Reduced AI context usage (from ~40K to ~33K tokens) by streamlining tool descriptions
 - **Removed:** `change_scope` (use `impact_analysis`), `find_circular_dependencies`, `list_refactoring_services` - rarely used tools
