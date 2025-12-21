@@ -45,6 +45,11 @@ AI assistants use text search (grep/ripgrep) which misses semantic relationships
 
 ## Features
 
+### v1.16.2
+- **New:** `config_tool_enabled` — Enable/disable tools to save memory. Disabled tools won't load after server restart
+- **New:** Custom tool descriptions — LLM can update tool descriptions stored in DB (used in `tools/list` response)
+- **New:** `config_list` now shows all tools with enabled/disabled status and stats
+
 ### v1.16.1
 - **Improved:** `get_dependency_graph` — Full project graph with edges by default. New params: `rootProject` (filter), `maxDepth`, `direction` (dependencies/dependents/both) for large solutions (70+ projects)
 - **Fixed:** `memory_*` tools now accept string importance ("high"→8, "medium"→5, "low"→3) in addition to numbers
