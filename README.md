@@ -19,39 +19,22 @@
 ## Supported AI Assistants
 
 - Claude Code (Anthropic)
-- GitHub Copilot (with MCP support)
-- Cursor
+- Codex
 - Any MCP-compatible client
 
 ## Why RoslynMCP?
 
-AI assistants typically use text-based search (grep) which produces false positives and misses semantic relationships. RoslynMCP uses the same Roslyn compiler that powers Visual Studio's IntelliSense.
+AI assistants use text search (grep/ripgrep) which misses semantic relationships. RoslynMCP provides compiler-level accuracy using the same Roslyn engine that powers Visual Studio IntelliSense.
 
-| Criteria | RoslynMCP | Grep/Glob |
-|----------|-----------|-----------|
-| Symbol search accuracy | ✅ 100% (semantic) | ⚠️ ~80% (text-based) |
-| Distinguishes overloads | ✅ Yes | ❌ No |
-| Understands types | ✅ Yes | ❌ No |
-| Call hierarchy | ✅ Callers/Callees | ❌ No |
-| Interface implementations | ✅ Yes | ⚠️ Regex hacks |
-| Method overrides | ✅ Yes | ⚠️ Regex hacks |
-| False positives | ✅ 0% | ⚠️ Possible (comments, strings) |
+| Capability | RoslynMCP | Text Search |
+|------------|-----------|-------------|
+| Symbol resolution | Semantic (100%) | Text matching (name collisions) |
+| Overloads | Distinguishes all | Cannot distinguish |
+| Type hierarchy | Full inheritance tree | Not available |
+| Call graph | Callers & callees | Not available |
+| Refactoring | Safe rename across solution | Find & replace (risky) |
 
-## When to Use
-
-**Use RoslynMCP for:**
-- Find all usages of a symbol (class, method, property)
-- Refactoring - find all places that need to change
-- Code understanding - type hierarchy, call graphs
-- Analyze method overloads
-- Find interface implementations
-- Impact analysis - what breaks if I change this?
-
-**Use Grep/Glob for:**
-- Quick text search - strings, comments, TODO
-- Non-C# files - XML, JSON, config
-- Regex patterns
-- Multi-file-type search
+**Use RoslynMCP:** symbol usages, type hierarchies, call graphs, safe refactoring, impact analysis, persistent memory
 
 ## Installation
 
