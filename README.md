@@ -62,6 +62,11 @@ AI assistants typically use text-based search (grep) which produces false positi
 
 ## Features
 
+### v1.16.1
+- **Improved:** `get_dependency_graph` — Full project graph with edges by default. New params: `rootProject` (filter), `maxDepth`, `direction` (dependencies/dependents/both) for large solutions (70+ projects)
+- **Fixed:** `memory_*` tools now accept string importance ("high"→8, "medium"→5, "low"→3) in addition to numbers
+- **Fixed:** `memory_update` accepts both `id` and `memoryId` parameters
+
 ### v1.16.0 — Memory & Graph (Experimental)
 - **New:** `memory_*` tools (14 tools) — Persistent memory across sessions
 - **New:** `graph_*` tools (10 tools) — Track dependencies, changes, cause-effect relationships
