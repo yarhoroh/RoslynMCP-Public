@@ -55,18 +55,87 @@ AI assistants typically use text-based search (grep) which produces false positi
 
 ## Installation
 
-1. Install RoslynMCP from [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=YaroslavHorokhov.RoslynMcp/)
+1. Install RoslynMCP from [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=YaroslavHorokhov.RoslynMcp)
 2. Open your C# solution in Visual Studio
 3. Go to **View → Other Windows → RoslynMCP**
 4. Copy the configuration for your AI assistant
 
 ## Features
 
+### v1.16.0 — Memory & Graph (Experimental)
+- **New:** `memory_*` tools (14 tools) — Persistent memory across sessions
+- **New:** `graph_*` tools (10 tools) — Track dependencies, changes, cause-effect relationships
+- **New:** `graph_build_from_type` — Auto-build dependency graph from Roslyn analysis (hierarchy, callers, callees)
+- **Database:** `.roslyn-mcp/memory.db` (SQLite) in your solution directory
+- **Vector Search:** Uses ONNX model (`all-MiniLM-L6-v2`) for semantic memory search
+- **Config:** LLM can tune vector search via `config_set` (e.g., `vector_threshold`, `scoring_similarity_weight`)
+
+> ⚠️ **Experimental:** Memory and Graph tools are new. We're still figuring out the best workflows. Try different approaches and find what works for you!
+
+#### Memory Scopes & Importance
+| Scope | Lifetime | Use for |
+|-------|----------|---------|
+| `global` | Forever | Project rules, patterns, architectural decisions |
+| `session` | Until session ends | Current task context, temporary notes |
+
+**Importance (1-10):** Higher = more likely to appear in `memory_context`. Use 8-10 for critical rules, 5-7 for useful info, 1-4 for minor notes.
+
+#### Memory Tools
+| Tool | Purpose |
+|------|---------|
+| `memory_start_session` | Start tracking a dev session |
+| `memory_end_session` | End session with summary |
+| `memory_list_sessions` | List all sessions |
+| `memory_restore` | Restore context from previous session |
+| `memory_remember` | Save decision/change/error/fix |
+| `memory_learn` | Save pattern/lesson (global) |
+| `memory_recall` | Get memories by type/tags/files |
+| `memory_context` | Get relevant context for task |
+| `memory_search` | Semantic search in memories |
+| `memory_update` | Update existing memory |
+| `memory_consolidate` | Merge similar memories |
+| `memory_analyze` | Memory health stats |
+| `memory_forget` | Delete a memory |
+| `memory_forget_session` | Delete session + its graph nodes |
+
+#### Graph Tools
+| Tool | Purpose |
+|------|---------|
+| `graph_track_change` | Track file modification |
+| `graph_track_dependency` | Track A depends on B |
+| `graph_track_cause` | Track cause → effect |
+| `graph_build_from_type` | Auto-build graph from Roslyn (hierarchy + calls) |
+| `graph_get_impact` | What breaks if I change X? |
+| `graph_get_dependencies` | Show dependency tree |
+| `graph_get_path` | Find path between two nodes |
+| `graph_get_history` | File change history |
+| `graph_visualize` | Generate Mermaid diagram |
+| `graph_delete_node` | Remove node + orphans |
+
+#### Quick Start
+```
+# Start session
+memory_start_session("Adding feature X")
+
+# Track changes as you work
+graph_track_change("MyClass.cs", "Added new method")
+graph_track_dependency("ServiceA", "ServiceB")
+
+# Or auto-build from existing code
+graph_build_from_type("MyService")  # builds hierarchy + callers + callees
+
+# Save learnings
+memory_learn("Always validate input before processing")
+
+# End session
+memory_end_session("Feature X completed")
+
+# Later: recall context
+memory_context(forTask="similar feature")
+graph_get_impact(nodeId="ServiceB")
+```
+
 ### v1.14.1
-- **Fixed:** Codex model compatibility issues
-- **Optimized:** Reduced AI context usage (from ~33K to ~29K tokens)
- 
-### v1.14.0
 - **Optimized:** Reduced AI context usage (from ~40K to ~33K tokens) by streamlining tool descriptions
 - **Removed:** `change_scope` (use `impact_analysis`), `find_circular_dependencies`, `list_refactoring_services` - rarely used tools
 
@@ -94,7 +163,7 @@ AI assistants typically use text-based search (grep) which produces false positi
 ### v1.10.0
 - **Fixed:** `reload_file` now works correctly (was failing with "TryApplyChanges cannot be called from a background thread")
 
-RoslynMCP provides **50+ Roslyn-powered tools**:
+RoslynMCP provides **70+ Roslyn-powered tools**:
 
 | Category | Tools |
 |----------|-------|
@@ -106,6 +175,8 @@ RoslynMCP provides **50+ Roslyn-powered tools**:
 | ***💡 IntelliSense*** | `get_quick_fixes`, `get_overloads`, `get_xml_documentation` |
 | ***🔎 Search*** | `find_attribute_usages`, `find_event_subscribers`, `find_extension_methods`, `find_tests_for_type`, `text_search` |
 | ***📊 Metrics*** | `get_code_metrics`, `analyze_data_flow`, `get_full_context`, `get_constructor_parameters` |
+| ***🧠 Memory*** | `memory_start_session`, `memory_end_session`, `memory_remember`, `memory_learn`, `memory_recall`, `memory_context`, `memory_search`, `memory_forget`, `memory_forget_session`, `memory_update`, `memory_consolidate`, `memory_analyze`, `memory_list_sessions`, `memory_restore` |
+| ***🔗 Graph*** | `graph_track_change`, `graph_track_dependency`, `graph_track_cause`, `graph_build_from_type`, `graph_get_impact`, `graph_get_history`, `graph_get_dependencies`, `graph_get_path`, `graph_visualize`, `graph_delete_node` |
 
 ## Troubleshooting
 
