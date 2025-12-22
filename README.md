@@ -45,6 +45,68 @@ AI assistants use text search (grep/ripgrep) which misses semantic relationships
 
 ## Features
 
+### v1.17.0 — Teaching Claude
+- **Fixed:** `memory_forget_session(deleteSession=true)` now correctly deletes ALL session memories regardless of `keepGlobal` flag
+- **New:** Added guidance for teaching Claude how to use RoslynMCP effectively via memory
+- **Architecture:** Only 4.6k tokens for 86 tools via `search_tools` → `call_tool` pattern (vs ~40k+ if all tools loaded)
+
+#### How Tool Search Works
+
+All 86 tool descriptions are indexed as 384-dimensional vectors using `all-MiniLM-L6-v2` ONNX model. When you call `search_tools("find usages")`, the query is embedded and matched via cosine similarity.
+
+```
+search_tools("find usages") → embedding → cosine similarity → top-K tools
+```
+
+**Config options** (via `config_set`):
+| Key | Default | Description |
+|-----|---------|-------------|
+| `tool_search_threshold` | 0.3 | Minimum similarity score (0-1) |
+
+#### Two Graph Systems
+
+RoslynMCP uses two complementary graph systems:
+
+| Graph | Tools | Purpose |
+|-------|-------|---------|
+| **Roslyn Call Graph** | `find_callers`, `find_callees`, `understand_method` | Static code analysis — who calls what |
+| **DevGraph** | `graph_*` tools | Dynamic tracking — changes, causes, decisions |
+
+**Roslyn Graph** is built automatically from code. Use it to navigate:
+```
+find_callers("SaveUser") → which methods call SaveUser?
+find_callees("SaveUser") → what does SaveUser call?
+understand_method("SaveUser") → callers + callees + body in one call
+```
+
+**DevGraph** is built during work. Use it to track:
+```
+graph_track_change("User.cs", "Added validation")
+graph_track_cause(errorNodeId, "Fixed null reference")
+graph_get_impact("UserService") → what breaks if I change this?
+```
+
+#### Teaching Claude via Memory
+
+Write rules to memory so Claude remembers how to work with your codebase. Use `memory_learn` for global rules:
+
+```
+memory_learn("For C# code: ONLY use Roslyn MCP tools, NEVER grep/Glob. validate_text BEFORE edit, reload_file AFTER.")
+memory_learn("Write memories in English (better vector search). Show user info in their language.")
+memory_learn("Use graph tools with sessions: start_session before tracking, graph_track_change after edits, graph_track_cause for bug fixes.")
+```
+
+**Recommended starter memories:**
+| Rule | Why |
+|------|-----|
+| Use Roslyn tools for C# | 100% accurate vs text search |
+| validate_text before edit | Catch errors before saving |
+| reload_file after edit | Sync Roslyn workspace |
+| English in memory | Vector search works better |
+| Graph with sessions | Track changes, dependencies, causes |
+
+After `memory_learn`, Claude will recall these rules via `memory_context` at conversation start.
+
 ### v1.16.2
 - **New:** `config_tool_enabled` — Enable/disable tools to save memory. Disabled tools won't load after server restart
 - **New:** Custom tool descriptions — LLM can update tool descriptions stored in DB (used in `tools/list` response)
