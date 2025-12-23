@@ -45,6 +45,9 @@ AI assistants use text search (grep/ripgrep) which misses semantic relationships
 
 ## Features
 
+### v1.17.4 — Graph Build Counters Fix
+**Fixed:** `graph_build_from_type` now correctly counts nodes and edges. `nodesSkipped` renamed to `edgesSkipped`.
+
 ### v1.17.3 — Custom Tool Descriptions Fix
 **Fixed:** `search_tools` now uses custom descriptions from `config_tool_enabled`.
 
