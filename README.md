@@ -45,8 +45,10 @@ AI assistants use text search (grep/ripgrep) which misses semantic relationships
 
 ## Features
 
-### v1.17.2 — Knowledge Base (Persistent Long-Term Memory)
+### v1.17.3 — Custom Tool Descriptions Fix
+**Fixed:** `search_tools` now uses custom descriptions from `config_tool_enabled`.
 
+### v1.17.2 — Knowledge Base (Persistent Long-Term Memory)
 New `kb_*` tools for storing knowledge that persists across sessions forever.
 
 #### Memory vs Knowledge Base
