@@ -45,6 +45,64 @@ AI assistants use text search (grep/ripgrep) which misses semantic relationships
 
 ## Features
 
+### v1.17.2 — Knowledge Base (Persistent Long-Term Memory)
+
+New `kb_*` tools for storing knowledge that persists across sessions forever.
+
+#### Memory vs Knowledge Base
+
+| Feature | `memory_*` (Session Memory) | `kb_*` (Knowledge Base) |
+|---------|---------------------------|------------------------|
+| **Purpose** | Current work context | Long-term knowledge |
+| **Lifetime** | Session or until deleted | Forever (persistent) |
+| **Use for** | Task context, temp notes, decisions during work | History, ideas, docs, links, snippets, todos |
+| **Search** | By type, tags, files | By type, category, tags, dates + semantic |
+
+**Use `memory_*` for:** what you're doing now, session context, temporary decisions
+**Use `kb_*` for:** what you want to remember forever — history, ideas, documentation, useful links
+
+#### Knowledge Base Types
+| Type | Use for |
+|------|---------|
+| `Note` | Observations, thoughts, meeting notes |
+| `Idea` | Future features, "we could...", backlog |
+| `Doc` | How-to guides, setup instructions |
+| `Snippet` | Reusable code, templates, patterns |
+| `Link` | URLs with context (docs, articles) |
+| `History` | "We did X", milestones, changelog |
+| `Todo` | Non-urgent tasks, "don't forget to..." |
+| `Reference` | API docs, config explanations |
+
+#### Knowledge Base Tools
+| Tool | Purpose |
+|------|---------|
+| `kb_add` | Create entry (type, category, title, content, url?, tags?) |
+| `kb_get` | Get entry by ID (with full content) |
+| `kb_update` | Update any field individually (only passed fields change) |
+| `kb_delete` | Delete entry (cascade? for children) |
+| `kb_search` | Semantic + FTS search with filters (type, category, dates) |
+| `kb_list` | List entries with filters (returns summaries by default) |
+| `kb_tree` | View hierarchy (parent/children) |
+| `kb_related` | Find related entries |
+
+#### Token-Efficient Workflow
+```
+# Get summaries first (no content = less tokens)
+kb_list type:"History" createdAfter:"2025-12-22"
+
+# Then fetch full content for specific entries
+kb_get id:"abc123"
+```
+
+**Date filters:**
+- `"what did we do yesterday"` → `createdAfter:"2025-12-22" createdBefore:"2025-12-23"`
+- `"last week"` → `createdAfter:"2025-12-16"`
+
+### v1.17.1 — Tool Schema & Vector Sync
+- **Fixed:** AlwaysLoadedTools now show full JSON schema (was minimal `{type:object}`)
+- **Optimized:** Removed `validate_text`, `reload_file`, `get_errors` from always-loaded (find via `search_tools`)
+- **New:** `RegenerateToolVector` — vectors update immediately when description changes
+
 ### v1.17.0 — Teaching Claude
 - **Fixed:** `memory_forget_session(deleteSession=true)` now correctly deletes ALL session memories regardless of `keepGlobal` flag
 - **New:** Added guidance for teaching Claude how to use RoslynMCP effectively via memory
@@ -218,7 +276,7 @@ graph_get_impact(nodeId="ServiceB")
 ### v1.10.0
 - **Fixed:** `reload_file` now works correctly (was failing with "TryApplyChanges cannot be called from a background thread")
 
-RoslynMCP provides **70+ Roslyn-powered tools**:
+RoslynMCP provides **90+ Roslyn-powered tools**:
 
 | Category | Tools |
 |----------|-------|
@@ -231,6 +289,7 @@ RoslynMCP provides **70+ Roslyn-powered tools**:
 | ***🔎 Search*** | `find_attribute_usages`, `find_event_subscribers`, `find_extension_methods`, `find_tests_for_type`, `text_search` |
 | ***📊 Metrics*** | `get_code_metrics`, `analyze_data_flow`, `get_full_context`, `get_constructor_parameters` |
 | ***🧠 Memory*** | `memory_start_session`, `memory_end_session`, `memory_remember`, `memory_learn`, `memory_recall`, `memory_context`, `memory_search`, `memory_forget`, `memory_forget_session`, `memory_update`, `memory_consolidate`, `memory_analyze`, `memory_list_sessions`, `memory_restore` |
+| ***📚 Knowledge Base*** | `kb_add`, `kb_get`, `kb_update`, `kb_delete`, `kb_search`, `kb_list`, `kb_tree`, `kb_related` |
 | ***🔗 Graph*** | `graph_track_change`, `graph_track_dependency`, `graph_track_cause`, `graph_build_from_type`, `graph_get_impact`, `graph_get_history`, `graph_get_dependencies`, `graph_get_path`, `graph_visualize`, `graph_delete_node` |
 
 ## Troubleshooting
