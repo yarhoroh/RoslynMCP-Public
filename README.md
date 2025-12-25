@@ -10,6 +10,51 @@
 
 ---
 
+## ⚡ TL;DR: How to Connect
+
+1. Open your C# solution in Visual Studio
+2. Go to **View → Other Windows → RoslynMCP**
+3. Copy the JSON configuration to your AI assistant's config
+
+**Example for Claude Code:**
+```
+claude mcp add roslyn -- "c:\users\<username>\appdata\local\microsoft\visualstudio\<vs-instance>\extensions\<extension-id>\Proxy\RoslynMcp.Proxy.exe"
+```
+
+> ⚠️ The path is unique to your VS installation — don't copy the example above, copy from the RoslynMCP tool window.
+
+**Multiple VS instances:** Each Visual Studio window runs its own MCP server. Your AI assistant automatically connects to the one with your solution's folder open.
+
+**Database:** Creates `.roslyn-mcp/memory.db` (SQLite) in your solution directory for memory, knowledge base, and graph data.
+
+**First time? Copy this and send to your AI assistant:**
+
+```
+Save this rule permanently using memory_learn with scope:"global":
+
+RoslynMCP basics:
+
+1. Find & Execute Tools: 80+ tools available
+   - search_tools("what you need") → find the right tool
+   - call_tool(name, args) → execute it
+
+2. C# Code: Never grep/Glob for .cs files — only Roslyn tools (100% semantic accuracy)
+
+3. Memory System (3 layers):
+   - memory_* — context & rules (scope:"session" for temp, scope:"global" for permanent)
+   - kb_* — knowledge base (ideas, docs, history, links — lives forever)
+   - graph_* — track changes, dependencies, cause→effect relationships
+
+4. Start conversation with: memory_context to recall saved rules + context
+
+Command:
+memory_learn(content:"RoslynMCP: search_tools to find, call_tool to execute (80+ tools). Never grep for .cs - Roslyn only. Memory layers: memory_* (session), kb_* (permanent knowledge), graph_* (dependencies/changes). Start with memory_context.", scope:"global", importance:10, key:"roslyn-basics")
+```
+
+This saves rules permanently. Next conversation, AI will auto-load them via `memory_context`.
+
+---
+
 ## Requirements
 
 - Windows 10/11
@@ -44,6 +89,10 @@ AI assistants use text search (grep/ripgrep) which misses semantic relationships
 4. Copy the configuration for your AI assistant
 
 ## Features
+
+### v1.17.5 — Documentation & Onboarding
+**Improved:** Added "TL;DR: How to Connect" section with quick setup guide, AI teaching instructions, and `memory_learn` command for permanent rules.
+**Fixed:** Global memories (`scope:"global"`) no longer get `sessionId` attached — they are truly session-independent now.
 
 ### v1.17.4 — Graph Build Counters Fix
 **Fixed:** `graph_build_from_type` now correctly counts nodes and edges. `nodesSkipped` renamed to `edgesSkipped`.
