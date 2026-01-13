@@ -90,6 +90,9 @@ AI assistants use text search (grep/ripgrep) which misses semantic relationships
 
 ## Features
 
+### v1.17.6 — JSON-RPC Case-Insensitive Parsing
+**Fixed:** JSON-RPC deserialization now accepts both `camelCase` and `PascalCase` property names (e.g., both `"jsonrpc"` and `"JsonRpc"`). This improves compatibility with various MCP clients.
+
 ### v1.17.5 — Documentation & Onboarding
 **Improved:** Added "TL;DR: How to Connect" section with quick setup guide, AI teaching instructions, and `memory_learn` command for permanent rules.
 **Fixed:** Global memories (`scope:"global"`) no longer get `sessionId` attached — they are truly session-independent now.
