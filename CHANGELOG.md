@@ -2,6 +2,25 @@
 
 All notable changes to RoslynMCP will be documented in this file.
 
+### v1.17.8 — Memory Scope & Retrieval v2
+- **Updated:** Session-first memory policy — `memory_remember` and `memory_learn` default to session scope.
+- **Improved:** Global scope guardrails with explicit scope adjustment reason for non-reusable entries.
+- **Enhanced:** `memory_context` retrieval v2 with scoped candidates, hybrid vector + FTS search, and rerank metadata.
+- **New:** Scope lifecycle tools — `memory_promote`, `memory_audit_scopes`, `memory_rebalance_scopes`.
+- **Fixed:** Stable memory search quality via FTS tag sync and embedding refresh on content/tag updates.
+- **Added:** Clear `text_search` usage guidance for LLMs (`queryMode`, `wholeWord`, `filePattern`, `maxResults`, `regexTimeoutMs`).
+- **Fixed:** TextSearch workflow docs now clarify safe defaults (`queryMode:"literal"` first), truncation handling, and wildcard pitfalls (`*term*` over broad scope).
+- **Fixed:** File-path handling in Roslyn file tools (`reload_file`, `get_file_outline`, `get_types_in_file`, `preview_extract_method`) now resolves relative/absolute paths consistently.
+- **Fixed:** `apply_move_type` now applies workspace changes on UI thread (prevents `TryApplyChanges` background-thread failure).
+- **Fixed:** `apply_split_class` now supports overloaded methods without duplicate-key failures.
+- **Fixed:** `organize_usings` rewritten to deterministic safe top-level using sort/remove flow (no destructive import pass).
+- **Fixed:** `memory_search` FTS snippets now return content snippets (not memory IDs).
+- **Fixed:** `memory_end_session` duration uses robust UTC round-trip parsing and clamps negative durations.
+
+### v1.17.7 — Memory Tools Improvements
+- **New:** `memory_context` now accepts `sessionId` parameter to query specific session memories.
+- **Fixed:** Removed misleading `default` values from memory tool schemas — AI can freely choose which parameters to pass.
+
 ### v1.17.6 — JSON-RPC Case-Insensitive Parsing
 - **Fixed:** JSON-RPC deserialization now accepts both `camelCase` and `PascalCase` property names (e.g., both `"jsonrpc"` and `"JsonRpc"`). Improves compatibility with various MCP clients.
 
