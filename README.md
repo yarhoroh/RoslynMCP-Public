@@ -94,6 +94,18 @@ AI assistants use text search (grep/ripgrep) which misses semantic relationships
 4. Copy the configuration for your AI assistant
 
 ## Features
+### v1.17.10 — Find Usages (ReSharper-style) & Instance Switching
+
+> ⚠️ **After updating to v1.17.10:** Reconnect (restart) your MCP server in the AI assistant. New proxy-level tools (`list_instances`, `switch_instance`) are registered in the Proxy, not the VS extension — they won't appear until the MCP connection is restarted.
+
+- **Improved:** `find_references` now returns real code snippets via `includeContext:true` (was always empty before).
+- **New:** `find_references` returns `containingType` and `containingMember` for each reference — shows WHERE the usage lives.
+- **New:** `find_references` supports `groupBy:"typeAndMember"` — ReSharper-style grouped results: Type → Member → usages[].
+- **New:** Proxy tool `list_instances` — list all running Visual Studio instances with RoslynMCP (solution name, directory, port, connection status).
+- **New:** Proxy tool `switch_instance` — switch AI assistant to a different Visual Studio instance by port, solution name, or directory. No restart needed.
+- **Fixed:** `containingMember` no longer leaks namespace names (e.g., "Services") for definitions — now correctly shows `(type-level)`.
+- **Fixed:** 6 build errors on .NET 4.7.2 (`string.Contains(string, StringComparison)` → `IndexOf`).
+
 
 ### v1.17.8 — Memory Scope & Retrieval v2
 - **Updated:** Session-first memory policy — `memory_remember` and `memory_learn` default to session scope.
