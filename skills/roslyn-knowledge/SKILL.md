@@ -1,6 +1,6 @@
 ---
 name: roslyn-knowledge
-description: Roslyn MCP knowledge base — KB vs Memory, CRUD, search, hierarchy, categories
+description: "Roslyn MCP knowledge base — KB vs Memory, CRUD, search, hierarchy, categories.\nTRIGGER when: ANY knowledge base operation — kb_add, kb_search, kb_list, kb_tree, kb_update, kb_delete.\nDO NOT TRIGGER when: working with session memory (memory_*) or code analysis."
 ---
 
 # Roslyn MCP: Knowledge Base (KB)

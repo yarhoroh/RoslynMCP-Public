@@ -1,6 +1,6 @@
 ---
 name: roslyn-code
-description: Full C# code workflow with Roslyn MCP — orientation, understanding, references, analysis, edit, verification
+description: "Full C# code workflow with Roslyn MCP — orientation, understanding, references, analysis, edit, verification.\nTRIGGER when: ANY operation on C# code — read, analyze, navigate, refactor, edit, find references, check errors.\nDO NOT TRIGGER when: working with non-C# files, or only VS IDE commands (build/debug)."
 ---
 
 # Roslyn MCP: Code Workflow

@@ -1,6 +1,6 @@
 ---
 name: roslyn-session
-description: Roslyn MCP session and memory management — start, record, restore, end, maintenance, change graph
+description: "Roslyn MCP session and memory management — start, record, restore, end, maintenance, change graph.\nTRIGGER when: session management, memory maintenance, change graph tracking, consolidate/audit/rebalance.\nDO NOT TRIGGER when: just recalling memory or simple remember/forget."
 ---
 
 # Roslyn MCP: Sessions & Memory

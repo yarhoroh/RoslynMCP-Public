@@ -1,424 +1,128 @@
-<p>
-  MCP server that connects AI assistants to Visual Studio's Roslyn compiler for <strong>100% accurate C# code analysis</strong>.
-</p>
+#  Give your AI assistant full control over Visual Studio — code analysis, debugging, UI automation, and more.
 
-> **Platform:** Windows only | **Language:** C# only
+*Make AI coding assistants actually useful for professional C# development.*
 
+> **Platform:** Windows only | **Language:** C# only | **Requirements:** Windows 10/11, Visual Studio 2022 (17.9+), any MCP-compatible AI assistant
 
-## Tired of typing prompts manually? 🎤
-Try Murmur — offline voice-to-text for Windows. Fast, private, no cloud.
-👉 https://murmurvt.com/
+## Quick Start
 
----
-
-☕ **Like it?** Buy me a coffee so I can mass-produce more extensions at 3 AM → [ko-fi.com/yaroslavhorokhov](https://ko-fi.com/yaroslavhorokhov)
-
----
-
-## ⚡ TL;DR: How to Connect
-
-1. Open your C# solution in Visual Studio
-2. Go to **View → Other Windows → RoslynMCP**
-3. Copy the JSON configuration to your AI assistant's config
-
-**Example for Claude Code:**
-```
-claude mcp add roslyn -- "c:\users\<username>\appdata\local\microsoft\visualstudio\<vs-instance>\extensions\<extension-id>\Proxy\RoslynMcp.Proxy.exe"
-```
-
-> ⚠️ The path is unique to your VS installation — don't copy the example above, copy from the RoslynMCP tool window.
-
-**Multiple VS instances:** Each Visual Studio window runs its own MCP server. Your AI assistant automatically connects to the one with your solution's folder open.
-
-**Database:** Creates `.roslyn-mcp/memory.db` (SQLite) in your solution directory for memory, knowledge base, and graph data.
-
-**First time? Copy this and send to your AI assistant:**
-
-```
-Save this rule permanently using memory_learn with scope:"global":
-
-RoslynMCP basics:
-
-1. Find & Execute Tools: 80+ tools available
-   - search_tools("what you need") → find the right tool
-   - call_tool(name, args) → execute it
-
-2. C# Code: Never grep/Glob for .cs files — only Roslyn tools (100% semantic accuracy)
-
-3. Memory System (3 layers):
-   - memory_* — context & rules (scope:"session" for temp, scope:"global" for permanent)
-   - kb_* — knowledge base (ideas, docs, history, links — lives forever)
-   - graph_* — track changes, dependencies, cause→effect relationships
-
-4. Start conversation with: memory_context to recall saved rules + context
-
-Command:
-memory_learn(content:"RoslynMCP: search_tools to find, call_tool to execute (80+ tools). Never grep for .cs - Roslyn only. Memory layers: memory_* (session), kb_* (permanent knowledge), graph_* (dependencies/changes). Start with memory_context.", scope:"global", importance:10, key:"roslyn-basics")
-```
-
-This saves rules permanently. Next conversation, AI will auto-load them via `memory_context`.
-
----
-
-## Requirements
-
-- Windows 10/11
-- Visual Studio 2022 (17.9 or later)
-- C# solution (.sln)
-
-## Supported AI Assistants
-
-- Claude Code (Anthropic)
-- Codex
-- Any MCP-compatible client
-
-## Why RoslynMCP?
-
-AI assistants use text search (grep/ripgrep) which misses semantic relationships. RoslynMCP provides compiler-level accuracy using the same Roslyn engine that powers Visual Studio IntelliSense.
-
-| Capability | RoslynMCP | Text Search |
-|------------|-----------|-------------|
-| Symbol resolution | Semantic (100%) | Text matching (name collisions) |
-| Overloads | Distinguishes all | Cannot distinguish |
-| Type hierarchy | Full inheritance tree | Not available |
-| Call graph | Callers & callees | Not available |
-| Refactoring | Safe rename across solution | Find & replace (risky) |
-
-**Use RoslynMCP:** symbol usages, type hierarchies, call graphs, safe refactoring, impact analysis, persistent memory
-
-## Installation
-
-1. Install RoslynMCP from [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=YaroslavHorokhov.RoslynMcp)
+1. Install from [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=YaroslavHorokhov.RoslynMcp)
 2. Open your C# solution in Visual Studio
-3. Go to **View → Other Windows → RoslynMCP**
-4. Copy the configuration for your AI assistant
+3. Go to **View → Other Windows → RoslynMCP Dashboard**
+4. Copy the connection command for your AI assistant (Claude Code, Codex, Copilot, or Cursor)
+5. Ask your AI to explore all available tools — warning: it may refuse to work without them ever again 😄
+
+> ⚠️ The path is unique per VS installation — always copy from the Dashboard, not from examples.
+
+**Multiple VS instances:** Each Visual Studio window runs its own MCP server. AI auto-connects to the one matching your working directory.
+
+**Tip:** Create [skills](https://docs.anthropic.com/en/docs/claude-code/skills) (slash commands) for the tools you use most — this dramatically improves tool selection and output quality.
+
+## Configuration Examples
+
+Open the **RoslynMCP Dashboard** in Visual Studio (**View → Other Windows → RoslynMCP Dashboard**) and copy the connection command for your AI tool.
+
+> ⚠️ The path is unique per VS installation — **always copy from the Dashboard**, not from examples below.
+
+**Claude Code / Codex:**
+```bash
+claude mcp add roslyn -- "C:\Users\YOU\...\Proxy\RoslynMcp.Proxy.exe"
+codex mcp add roslyn -- "C:\Users\YOU\...\Proxy\RoslynMcp.Proxy.exe"
+```
+
+Works with any AI client that supports the [Model Context Protocol](https://modelcontextprotocol.io/).
 
 ## Features
-### v1.17.10 — Find Usages (ReSharper-style) & Instance Switching
 
-> ⚠️ **After updating to v1.17.10:** Reconnect (restart) your MCP server in the AI assistant. New proxy-level tools (`list_instances`, `switch_instance`) are registered in the Proxy, not the VS extension — they won't appear until the MCP connection is restarted.
+> **RoslynMCP includes a 30-day free trial.** After the trial period, a license is required to continue using the tools.
 
-- **Improved:** `find_references` now returns real code snippets via `includeContext:true` (was always empty before).
-- **New:** `find_references` returns `containingType` and `containingMember` for each reference — shows WHERE the usage lives.
-- **New:** `find_references` supports `groupBy:"typeAndMember"` — ReSharper-style grouped results: Type → Member → usages[].
-- **New:** Proxy tool `list_instances` — list all running Visual Studio instances with RoslynMCP (solution name, directory, port, connection status).
-- **New:** Proxy tool `switch_instance` — switch AI assistant to a different Visual Studio instance by port, solution name, or directory. No restart needed.
-- **Fixed:** `containingMember` no longer leaks namespace names (e.g., "Services") for definitions — now correctly shows `(type-level)`.
-- **Fixed:** 6 build errors on .NET 4.7.2 (`string.Contains(string, StringComparison)` → `IndexOf`).
+### Core Features
 
+#### Roslyn Code Analysis
+- **130+ tools** loaded on-demand via `search_tools` → `call_tool`
+- **Navigation:** `find_references`, `find_definition`, `find_callers`, `find_callees`, `find_implementations`, `find_overrides`
+- **Understanding:** `understand_type`, `understand_method`, `get_type_info`, `get_type_members`, `get_method_body`
+- **Diagnostics:** `get_errors`, `get_warnings`, `validate_text`, `find_async_issues`, `find_performance_issues`
+- **Refactoring:** `apply_rename`, `extract_interface`, `organize_usings`, `apply_split_class`, `apply_extract_method`
+- **Structure:** `get_solution_structure`, `get_project_structure`, `get_file_outline`, `get_dependency_graph`
 
-### v1.17.8 — Memory Scope & Retrieval v2
-- **Updated:** Session-first memory policy — `memory_remember` and `memory_learn` default to session scope.
-- **Improved:** Global scope guardrails with explicit scope adjustment reason for non-reusable entries.
-- **Enhanced:** `memory_context` retrieval v2 with scoped candidates, hybrid vector + FTS search, and rerank metadata.
-- **New:** Scope lifecycle tools — `memory_promote`, `memory_audit_scopes`, `memory_rebalance_scopes`.
-- **Fixed:** Stable memory search quality via FTS tag sync and embedding refresh on content/tag updates.
-- **Added:** Clear `text_search` usage guidance for LLMs (`queryMode`, `wholeWord`, `filePattern`, `maxResults`, `regexTimeoutMs`).
-- **Fixed:** TextSearch workflow docs now clarify safe defaults (`queryMode:"literal"` first), truncation handling, and wildcard pitfalls (`*term*` over broad scope).
-- **Fixed:** File-path handling in Roslyn file tools (`reload_file`, `get_file_outline`, `get_types_in_file`, `preview_extract_method`) now resolves relative/absolute paths consistently.
-- **Fixed:** `apply_move_type` now applies workspace changes on UI thread (prevents `TryApplyChanges` background-thread failure).
-- **Fixed:** `apply_split_class` now supports overloaded methods without duplicate-key failures.
-- **Fixed:** `organize_usings` rewritten to deterministic safe top-level using sort/remove flow (no destructive import pass).
-- **Fixed:** `memory_search` FTS snippets now return content snippets (not memory IDs).
-- **Fixed:** `memory_end_session` duration uses robust UTC round-trip parsing and clamps negative durations.
+#### OOP C# Programming (`cs` tool)
 
-### v1.17.7 — Memory Tools Improvements
-**New:** `memory_context` now accepts `sessionId` parameter to query specific session memories.
-**Fixed:** Removed misleading `default` values from memory tool schemas — AI can freely choose which parameters to pass.
+- **86 actions** for object-oriented C# programming directly through Roslyn API — no text editing, no file I/O
+- Create/update/delete types, members, constructors, properties, events, attributes
+- Statement-level editing inside method bodies at any nesting depth (if/for/try/switch blocks)
+- Expression builders, batch mode, block path navigation (`Type.Method.if[0].else`)
+- Every mutation returns instant Roslyn diagnostics — no build needed to catch errors
 
-**AI Prompts for Memory**
+#### Visual Studio IDE Control
 
-****Global rule (forever):****
+- `vs` — 40 IDE actions: build, debug (start/stop/step/breakpoints), file operations, find/replace, deploy, bookmarks, run_tests, configuration
+- `vs_query` — 25 IDE queries: solution, projects, errors, build output, debug state, locals, callstack, threads, expressions, editor context, bookmarks, tests, test_results
+- `vs_query editor_context` — cursor position, selected text, word at cursor, surrounding code, breakpoint status, debug value + Roslyn semantic context (method, class, namespace, scope chain, symbol info, diagnostics)
+- `bookmark_set` / `bookmark_next` / `bookmark_prev` / `bookmark_clear_all` — AI sets labeled bookmarks, navigates between them, user sees them in VS editor margins
+- `debug_monitor` — live state of debugged app: windows, dialogs, UI elements. Blocking `waitFor` eliminates polling
+- `list_instances` / `switch_instance` — manage multiple VS instances from one AI session
+- **Auto-schema on errors** — when AI sends wrong parameters, the error response includes the correct JSON schema so AI self-corrects on next attempt
 
-```Remember forever: [rule]```
 
-```Save as global rule: [rule]```
+#### Test Runner
 
-****Current session:****
+- `vs { "action": "run_tests" }` — run all tests via Test Explorer (non-blocking, background)
+- `vs { "action": "run_tests", "options": {"failedOnly": true} }` — re-run only failed tests
+- `vs { "action": "stop_tests" }` — cancel running tests
+- `vs_query { "what": "test_results" }` — get results: passed/failed counts, error messages with file:line
+- `vs_query { "what": "tests" }` — discover all test methods via Roslyn ([Fact]/[Test]/[TestMethod] attributes)
+- `find_tests_for_type` — find unit tests targeting a specific type across test projects
+- Full TDD cycle: run → check errors → fix → re-run failed → all green
 
-```Note for this session: [note]```
+#### Desktop Automation & UI Testing
 
-```Remember for now: [decision]```
+- `screen` (23 actions) — screenshots (full screen, window, region), mouse (click/double-click/move/scroll), keyboard input (Unicode, hotkeys, combos), window/process management, clipboard, screen info
+- `ui_find` / `ui_invoke` / `ui_tree` — Windows UI Automation: find elements by name/automationId, invoke buttons, toggle checkboxes, select items, double-click
+- `ui_set_value` / `ui_get_value` / `ui_table` — read/write form fields, read data grids
+- `ui_expand` / `ui_select` — expand/collapse tree nodes, select items in lists and combo boxes
+- Works with WinForms, WPF, Win32 apps. Partial support for Electron apps (Teams, Slack, WhatsApp).
 
-****Knowledge base (permanent):****
+#### Memory & Knowledge Base
+- `memory_*` (17 tools) — persistent cross-session memory with vector search (ONNX)
+- `kb_*` (8 tools) — permanent knowledge base with semantic + full-text search
 
-```Save to KB: [info]```
+#### Dashboard
 
-```Add to knowledge base as idea/note/link: [content]```
+- Tool window in VS (**View → Other Windows → RoslynMCP Dashboard**)
+- License status with activation (trial countdown, license key input, Buy button)
+- Connection configs for Claude Code, Codex, GitHub Copilot, Cursor — copy with one click
+- Tabs: Workflows editor, Memory editor, Knowledge Base editor, Debug Monitor (live windows/elements/events)
 
-****Sessions:****
+### Experimental Features
 
-```Start session: [goal]```
+> These features are functional but still being improved and tested.
 
-```End session: [summary]```
+#### Claude Chat Panel
 
-****Recall:****
+- Built-in Claude Code chat directly in Visual Studio (**View → Other Windows → Claude Chat**)
+- Adapted from [Claude Code for VS Code](https://marketplace.visualstudio.com/items?itemName=anthropic.claude-code) extension — React UI running in WebView2
+- RoslynMCP tools are automatically connected via `--mcp-config` — no manual setup needed
+- Bundled Roslyn skills are included with the extension at `Skills/.claude/skills/` inside the VSIX. To customize, copy them to your project's `.claude/skills/` directory or edit them for use with Claude Code in PowerShell
 
-```What do you remember about [topic]?```
 
-```Show KB history```
+#### Markdown Tool
+- `md` — structured .md editing (9 actions): `toc`, `read`, `read_section`, `search`, `edit_section`, `insert_section`, `append`, `delete_section`, `replace`
 
-```What was in the last session?```
+#### DevGraph
+- `graph_*` (10 tools) — track changes, dependencies, cause-effect during development
+- `graph_build_from_type` — auto-build dependency graph from Roslyn semantic model
+- `graph_track_change` / `graph_track_dependency` / `graph_track_cause` — record changes and relationships
+- `graph_get_impact` — what breaks if I change X?
+- `graph_get_dependencies` / `graph_get_path` / `graph_get_history` — explore connections and evolution
+- `graph_visualize` — export as Mermaid or DOT diagram
 
-
-### v1.17.6 — JSON-RPC Case-Insensitive Parsing
-**Fixed:** JSON-RPC deserialization now accepts both `camelCase` and `PascalCase` property names (e.g., both `"jsonrpc"` and `"JsonRpc"`). This improves compatibility with various MCP clients.
-
-### v1.17.5 — Documentation & Onboarding
-**Improved:** Added "TL;DR: How to Connect" section with quick setup guide, AI teaching instructions, and `memory_learn` command for permanent rules.
-**Fixed:** Global memories (`scope:"global"`) no longer get `sessionId` attached — they are truly session-independent now.
-
-### v1.17.4 — Graph Build Counters Fix
-**Fixed:** `graph_build_from_type` now correctly counts nodes and edges. `nodesSkipped` renamed to `edgesSkipped`.
-
-### v1.17.3 — Custom Tool Descriptions Fix
-**Fixed:** `search_tools` now uses custom descriptions from `config_tool_enabled`.
-
-### v1.17.2 — Knowledge Base (Persistent Long-Term Memory)
-New `kb_*` tools for storing knowledge that persists across sessions forever.
-
-#### Memory vs Knowledge Base
-
-| Feature | `memory_*` (Session Memory) | `kb_*` (Knowledge Base) |
-|---------|---------------------------|------------------------|
-| **Purpose** | Current work context | Long-term knowledge |
-| **Lifetime** | Session or until deleted | Forever (persistent) |
-| **Use for** | Task context, temp notes, decisions during work | History, ideas, docs, links, snippets, todos |
-| **Search** | By type, tags, files | By type, category, tags, dates + semantic |
-
-**Use `memory_*` for:** what you're doing now, session context, temporary decisions
-**Use `kb_*` for:** what you want to remember forever — history, ideas, documentation, useful links
-
-#### Knowledge Base Types
-| Type | Use for |
-|------|---------|
-| `Note` | Observations, thoughts, meeting notes |
-| `Idea` | Future features, "we could...", backlog |
-| `Doc` | How-to guides, setup instructions |
-| `Snippet` | Reusable code, templates, patterns |
-| `Link` | URLs with context (docs, articles) |
-| `History` | "We did X", milestones, changelog |
-| `Todo` | Non-urgent tasks, "don't forget to..." |
-| `Reference` | API docs, config explanations |
-
-#### Knowledge Base Tools
-| Tool | Purpose |
-|------|---------|
-| `kb_add` | Create entry (type, category, title, content, url?, tags?) |
-| `kb_get` | Get entry by ID (with full content) |
-| `kb_update` | Update any field individually (only passed fields change) |
-| `kb_delete` | Delete entry (cascade? for children) |
-| `kb_search` | Semantic + FTS search with filters (type, category, dates) |
-| `kb_list` | List entries with filters (returns summaries by default) |
-| `kb_tree` | View hierarchy (parent/children) |
-| `kb_related` | Find related entries |
-
-#### Token-Efficient Workflow
-```
-# Get summaries first (no content = less tokens)
-kb_list type:"History" createdAfter:"2025-12-22"
-
-# Then fetch full content for specific entries
-kb_get id:"abc123"
-```
-
-**Date filters:**
-- `"what did we do yesterday"` → `createdAfter:"2025-12-22" createdBefore:"2025-12-23"`
-- `"last week"` → `createdAfter:"2025-12-16"`
-
-### v1.17.1 — Tool Schema & Vector Sync
-- **Fixed:** AlwaysLoadedTools now show full JSON schema (was minimal `{type:object}`)
-- **Optimized:** Removed `validate_text`, `reload_file`, `get_errors` from always-loaded (find via `search_tools`)
-- **New:** `RegenerateToolVector` — vectors update immediately when description changes
-
-### v1.17.0 — Teaching Claude
-- **Fixed:** `memory_forget_session(deleteSession=true)` now correctly deletes ALL session memories regardless of `keepGlobal` flag
-- **New:** Added guidance for teaching Claude how to use RoslynMCP effectively via memory
-- **Architecture:** Only 4.6k tokens for 86 tools via `search_tools` → `call_tool` pattern (vs ~40k+ if all tools loaded)
-
-#### How Tool Search Works
-
-All 86 tool descriptions are indexed as 384-dimensional vectors using `all-MiniLM-L6-v2` ONNX model. When you call `search_tools("find usages")`, the query is embedded and matched via cosine similarity.
-
-```
-search_tools("find usages") → embedding → cosine similarity → top-K tools
-```
-
-**Config options** (via `config_set`):
-| Key | Default | Description |
-|-----|---------|-------------|
-| `tool_search_threshold` | 0.3 | Minimum similarity score (0-1) |
-
-#### Two Graph Systems
-
-RoslynMCP uses two complementary graph systems:
-
-| Graph | Tools | Purpose |
-|-------|-------|---------|
-| **Roslyn Call Graph** | `find_callers`, `find_callees`, `understand_method` | Static code analysis — who calls what |
-| **DevGraph** | `graph_*` tools | Dynamic tracking — changes, causes, decisions |
-
-**Roslyn Graph** is built automatically from code. Use it to navigate:
-```
-find_callers("SaveUser") → which methods call SaveUser?
-find_callees("SaveUser") → what does SaveUser call?
-understand_method("SaveUser") → callers + callees + body in one call
-```
-
-**DevGraph** is built during work. Use it to track:
-```
-graph_track_change("User.cs", "Added validation")
-graph_track_cause(errorNodeId, "Fixed null reference")
-graph_get_impact("UserService") → what breaks if I change this?
-```
-
-#### Teaching Claude via Memory
-
-Write rules to memory so Claude remembers how to work with your codebase. Use `memory_learn` for global rules:
-
-```
-memory_learn("For C# code: ONLY use Roslyn MCP tools, NEVER grep/Glob. validate_text BEFORE edit, reload_file AFTER.")
-memory_learn("Write memories in English (better vector search). Show user info in their language.")
-memory_learn("Use graph tools with sessions: start_session before tracking, graph_track_change after edits, graph_track_cause for bug fixes.")
-```
-
-**Recommended starter memories:**
-| Rule | Why |
-|------|-----|
-| Use Roslyn tools for C# | 100% accurate vs text search |
-| validate_text before edit | Catch errors before saving |
-| reload_file after edit | Sync Roslyn workspace |
-| English in memory | Vector search works better |
-| Graph with sessions | Track changes, dependencies, causes |
-
-After `memory_learn`, Claude will recall these rules via `memory_context` at conversation start.
-
-### v1.16.2
-- **New:** `config_tool_enabled` — Enable/disable tools to save memory. Disabled tools won't load after server restart
-- **New:** Custom tool descriptions — LLM can update tool descriptions stored in DB (used in `tools/list` response)
-- **New:** `config_list` now shows all tools with enabled/disabled status and stats
-
-### v1.16.1
-- **Improved:** `get_dependency_graph` — Full project graph with edges by default. New params: `rootProject` (filter), `maxDepth`, `direction` (dependencies/dependents/both) for large solutions (70+ projects)
-- **Fixed:** `memory_*` tools now accept string importance ("high"→8, "medium"→5, "low"→3) in addition to numbers
-- **Fixed:** `memory_update` accepts both `id` and `memoryId` parameters
-
-### v1.16.0 — Memory & Graph (Experimental)
-- **New:** `memory_*` tools (14 tools) — Persistent memory across sessions
-- **New:** `graph_*` tools (10 tools) — Track dependencies, changes, cause-effect relationships
-- **New:** `graph_build_from_type` — Auto-build dependency graph from Roslyn analysis (hierarchy, callers, callees)
-- **Database:** `.roslyn-mcp/memory.db` (SQLite) in your solution directory
-- **Vector Search:** Uses ONNX model (`all-MiniLM-L6-v2`) for semantic memory search
-- **Config:** LLM can tune vector search via `config_set` (e.g., `vector_threshold`, `scoring_similarity_weight`)
-
-> ⚠️ **Experimental:** Memory and Graph tools are new. We're still figuring out the best workflows. Try different approaches and find what works for you!
-
-#### Memory Scopes & Importance
-| Scope | Lifetime | Use for |
-|-------|----------|---------|
-| `global` | Forever | Project rules, patterns, architectural decisions |
-| `session` | Until session ends | Current task context, temporary notes |
-
-**Importance (1-10):** Higher = more likely to appear in `memory_context`. Use 8-10 for critical rules, 5-7 for useful info, 1-4 for minor notes.
-
-#### Memory Tools
-| Tool | Purpose |
-|------|---------|
-| `memory_start_session` | Start tracking a dev session |
-| `memory_end_session` | End session with summary |
-| `memory_list_sessions` | List all sessions |
-| `memory_restore` | Restore context from previous session |
-| `memory_remember` | Save decision/change/error/fix |
-| `memory_learn` | Save pattern/lesson (global) |
-| `memory_recall` | Get memories by type/tags/files |
-| `memory_context` | Get relevant context for task |
-| `memory_search` | Semantic search in memories |
-| `memory_update` | Update existing memory |
-| `memory_consolidate` | Merge similar memories |
-| `memory_analyze` | Memory health stats |
-| `memory_forget` | Delete a memory |
-| `memory_forget_session` | Delete session + its graph nodes |
-
-#### Graph Tools
-| Tool | Purpose |
-|------|---------|
-| `graph_track_change` | Track file modification |
-| `graph_track_dependency` | Track A depends on B |
-| `graph_track_cause` | Track cause → effect |
-| `graph_build_from_type` | Auto-build graph from Roslyn (hierarchy + calls) |
-| `graph_get_impact` | What breaks if I change X? |
-| `graph_get_dependencies` | Show dependency tree |
-| `graph_get_path` | Find path between two nodes |
-| `graph_get_history` | File change history |
-| `graph_visualize` | Generate Mermaid diagram |
-| `graph_delete_node` | Remove node + orphans |
-
-#### Quick Start
-```
-# Start session
-memory_start_session("Adding feature X")
-
-# Track changes as you work
-graph_track_change("MyClass.cs", "Added new method")
-graph_track_dependency("ServiceA", "ServiceB")
-
-# Or auto-build from existing code
-graph_build_from_type("MyService")  # builds hierarchy + callers + callees
-
-# Save learnings
-memory_learn("Always validate input before processing")
-
-# End session
-memory_end_session("Feature X completed")
-
-# Later: recall context
-memory_context(forTask="similar feature")
-graph_get_impact(nodeId="ServiceB")
-```
-
-### v1.14.1
-- **Optimized:** Reduced AI context usage (from ~40K to ~33K tokens) by streamlining tool descriptions
-- **Removed:** `change_scope` (use `impact_analysis`), `find_circular_dependencies`, `list_refactoring_services` - rarely used tools
-
-### v1.13.2
-- **New:** `extract_interface` - Extract interface from class for DI/testability. Generates `IClassName.cs` and adds interface implementation to class
-- **New:** `organize_usings` - Sort and remove unused using directives. Roslyn-powered cleanup with CS8019/CS0105 diagnostics
-
-### v1.13.0
-- **New:** `preview_split_class` / `apply_split_class` - Split large classes into partial files with smart method grouping
-- **New:** `preview_move_type` / `apply_move_type` - Move types to their own files
-- **New:** `apply_extract_method` - Extract code selection into a new method
-- **Improved:** `get_type_members` - Now works with ANY type including external (NuGet, System.*, Microsoft.*). Use short name (`Solution`) or full name (`Microsoft.CodeAnalysis.Solution`)
-- **Improved:** Tool descriptions with concrete examples for better AI tool selection
-- **Removed:** `get_completions`, `get_signature_help` - Replaced by enhanced `get_type_members` and `get_overloads`
-
-### v1.12.0
-- **New:** `get_full_context` - Get complete context for a symbol in one call: callers, callees, dependencies, related types
-- **Improved:** Redesigned all tool descriptions for better AI tool selection - priorities, explicit negations, use cases, workflow guidance
-
-### v1.11.0
-- **New:** `get_completions` - Get code completion suggestions at any position (like IntelliSense)
-- **New:** `get_signature_help` - Get method signature and parameter info during calls
-- **New:** `apply_rename` - Rename symbols across entire solution with Roslyn accuracy
-
-### v1.10.0
-- **Fixed:** `reload_file` now works correctly (was failing with "TryApplyChanges cannot be called from a background thread")
-
-RoslynMCP provides **90+ Roslyn-powered tools**:
-
-| Category | Tools |
-|----------|-------|
-| ***🔍 Navigation*** | `find_references`, `find_definition`, `find_callers`, `find_callees`, `find_implementations`, `find_overrides`, `find_base_members` |
-| ***🧠 Understanding*** | `understand_type`, `understand_method`, `get_type_info`, `get_type_members`, `get_method_body`, `get_class_hierarchy` |
-| ***📁 Structure*** | `get_solution_structure`, `get_project_structure`, `get_file_outline`, `get_types_in_file`, `find_entry_points`, `get_dependency_graph` |
-| ***🩺 Diagnostics*** | `get_errors`, `get_warnings`, `validate_text`, `find_async_issues`, `find_performance_issues`, `find_unused_code` |
-| ***🔧 Refactoring*** | `preview_rename`, `apply_rename`, `extract_interface`, `organize_usings`, `impact_analysis`, `preview_extract_method`, `suggest_refactorings` |
-| ***💡 IntelliSense*** | `get_quick_fixes`, `get_overloads`, `get_xml_documentation` |
-| ***🔎 Search*** | `find_attribute_usages`, `find_event_subscribers`, `find_extension_methods`, `find_tests_for_type`, `text_search` |
-| ***📊 Metrics*** | `get_code_metrics`, `analyze_data_flow`, `get_full_context`, `get_constructor_parameters` |
-| ***🧠 Memory*** | `memory_start_session`, `memory_end_session`, `memory_remember`, `memory_learn`, `memory_recall`, `memory_context`, `memory_search`, `memory_forget`, `memory_forget_session`, `memory_update`, `memory_consolidate`, `memory_analyze`, `memory_list_sessions`, `memory_restore` |
-| ***📚 Knowledge Base*** | `kb_add`, `kb_get`, `kb_update`, `kb_delete`, `kb_search`, `kb_list`, `kb_tree`, `kb_related` |
-| ***🔗 Graph*** | `graph_track_change`, `graph_track_dependency`, `graph_track_cause`, `graph_build_from_type`, `graph_get_impact`, `graph_get_history`, `graph_get_dependencies`, `graph_get_path`, `graph_visualize`, `graph_delete_node` |
+#### AI Workflow Engine
+- `wf_*` (27 tools) — reusable step-by-step instructions for AI
+- AI follows steps, annotates results, learns from mistakes
+- Step types: execute, verify, wait, call_case (nested), ai_freeform
+- Background watchers for windows, UI elements, processes
+- Progress tracking and run history
 
 ## Troubleshooting
 
@@ -427,18 +131,80 @@ RoslynMCP provides **90+ Roslyn-powered tools**:
 - Verify extension is enabled in Extensions → Manage Extensions
 
 ### AI assistant not connecting
+
 - Ensure Visual Studio has a solution open
-- Open the RoslynMCP tool window (View → Other Windows → RoslynMCP)
-- Verify the server status shows "Running"
+- Open the RoslynMCP Dashboard (View → Other Windows → RoslynMCP Dashboard) — status should show "Running"
+- Copy the connection command from the Dashboard for your AI tool
+
+**First connection fails (e.g. in VS Copilot logs):**
+This is normal — the MCP server starts before the extension finishes loading. The automatic retry connects successfully. No action needed.
+
+**Multiple VS instances or wrong project:**
+Ask your AI assistant: *"List all active RoslynMCP instances and switch to my current project."*
+The assistant will use `list_instances` and `switch_instance` to reconnect to the right Visual Studio instance.
 
 ### No tools available
 - Make sure you copied the correct configuration for your AI assistant
 - Restart your AI assistant after configuration changes
 
+
+### Data Storage
+
+RoslynMCP creates databases in `.roslyn-mcp/` inside your solution directory:
+
+| File | Contents |
+|------|----------|
+| `memory.db` | Memory, Knowledge Base, DevGraph, configuration |
+| `testcases.db` | AI Workflow Engine: workflows, steps, run history |
+
+License data is stored in `%AppData%/RoslynMcp/`.
+
+
+## RoslynMCP vs Other AI IDE Integrations
+
+
+All major AI coding tools (Claude Code, GitHub Copilot, Cursor) provide code understanding, inline diffs, terminal access, and agent capabilities. RoslynMCP is different in **two specific ways**:
+
+### Direct Roslyn Compiler Access
+
+Other tools analyze code through **text search or LLM context windows**. RoslynMCP connects to the **same Roslyn compiler API** that powers Visual Studio IntelliSense:
+
+| Capability | Text/LLM-based tools | **RoslynMCP** |
+|---|---|---|
+| Find references | Text search — may miss overloads, generics, partial classes | `find_references` — compiler-resolved, 100% accurate |
+| Understand type | LLM reads source text | `understand_type` — members, hierarchy, callers from compiled model |
+| Call graph | Not available | `get_full_context` — recursive call tree up & down |
+| Refactoring | Generate text diff | `apply_rename`, `apply_extract_method`, `apply_split_class` — via Roslyn code actions |
+| Edit C# code | Generate text diff, hope it compiles | `cs` tool — 86 OOP actions with instant Roslyn diagnostics |
+| Symbol at cursor | IDE-internal or unavailable | `editor_context` — resolved type, kind, full name from semantic model |
+| Data flow | Not available | `analyze_data_flow`, `analyze_operations` |
+
+### Full Visual Studio Debugger Control
+
+No other AI tool gives the AI model **direct programmatic access** to the Visual Studio debugger:
+
+- `vs start_debug` / `stop_debug` — launch and stop debugging sessions
+- `vs step_over` / `step_into` / `step_out` — sync stepping, returns new state + locals automatically
+- `vs breakpoint_add` — conditional breakpoints, function breakpoints
+- `vs_query locals` / `callstack` / `expression` — inspect runtime state
+- `debug_monitor` — live window/dialog tracking with blocking `waitFor`
+
+This enables the **self-development loop**: code → build → set breakpoint → debug → inspect → fix — all controlled by AI.
+
+
 ## License
 
-**PolyForm Noncommercial 1.0.0** — Free for personal and non-commercial use.
+Starting from v1.18.6, RoslynMCP includes a **30-day free trial**. After the trial, a subscription is required.
 
-Commercial use requires a separate license. See [LICENSE](https://github.com/yarhoroh/RoslynMCP-Public/blob/main/LICENSE) for details.
+- **Trial:** 30 days, full access, no registration needed
+- **Subscription:** available at [roslynmcp.lemonsqueezy.com](https://roslynmcp.lemonsqueezy.com)
+- **License key:** enter in RoslynMCP Dashboard (View → Other Windows → RoslynMCP Dashboard)
+- **Previous versions** (v1.18.4 and earlier) remain fully free
 
-For commercial licensing, contact: [ko-fi.com/yaroslavhorokhov](https://ko-fi.com/yaroslavhorokhov)
+For enterprise licensing or questions, contact via [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=YaroslavHorokhov.RoslynMcp).
+
+## Tired of typing prompts manually? 🎤
+Try Murmur — offline voice-to-text for Windows. Fast, private, no cloud.
+👉 https://murmurvt.com/
+
+---
