@@ -4,6 +4,9 @@
 
 > **Platform:** Windows only | **Language:** C# only | **Requirements:** Windows 10/11, Visual Studio 2022 (17.9+), any MCP-compatible AI assistant
 
+## Demo Video
+https://www.youtube.com/watch?v=skvnHbm2lpk
+
 ## Quick Start
 
 1. Install from [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=YaroslavHorokhov.RoslynMcp)
