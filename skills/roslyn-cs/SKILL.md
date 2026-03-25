@@ -62,7 +62,7 @@ no_trigger: Read-only code analysis without modifications (use roslyn-code), non
 | `add_constructor` | `target` (type), `body` | `parameters` |
 | `add_field` | `target`, `name`, `returnType` OR `body` (batch) | `modifiers`, `value` |
 | `add_property` | `target`, `name`, `returnType` OR `body` (batch) | `modifiers`, `accessors`, `value` |
-| `add_event` | `target`, `name` | — |
+| `add_event` | `target`, `name` | `returnType` (event type, default: EventHandler) |
 | `add_enum_member` | `target` (enum), `name` | `value` |
 | `add_parameter` | `target` (Type.Method), `parameters` | — |
 | `add_attribute` | `target`, `name` (attribute) | — |
@@ -82,16 +82,23 @@ Example: `cs action:"add_method" target:"IMyInterface" body:"void Save(string na
 
 
 ### Update
+
 | Action | Required | Optional |
 |--------|----------|----------|
-| `update_method` | `target` (Type.Method), `body` | — |
-| `update_constructor` | `target` (Type or Type.ctor), `body` | `parameters` |
-| `update_property` | `target` (Type.Prop) | `accessors`, `body` |
+| `update_method` | `target` (Type.Method or Type.Method(sig)), `body` | — |
+| `update_constructor` | `target` (Type or Type.ctor(sig)), `body` | `parameters` |
+| `update_property` | `target` (Type.Prop) | `accessors`, `body`, `value` |
 | `update_block` | `target` (Type.Method), `name` (index/kind), `body` | — |
 | `rename` | `target` (Type.Member), `name` (new name) | — |
 | `change_type` | `target` (Type.Member), `returnType` | — |
 | `change_modifiers` | `target`, `modifiers` | — |
 | `change_accessibility` | `target`, `modifiers` | — |
+
+**update_property parameters:**
+- `body` — converts to expression body (`=> expr;`), removes accessor list and initializer
+- `value` — updates initializer (`= expr;`), keeps accessor list intact
+- `accessors` — updates accessor list (`get; set;` or `get; private set;`)
+
 
 ### Delete
 | Action | Required |
@@ -250,24 +257,67 @@ Type.Method.switch[0].case[1]    → second case
 
 ## Constructor CRUD
 
+
 Constructors are NOT methods. They use separate actions:
 
 | Action | Usage |
 |--------|-------|
 | `add_constructor` | `target:"MyClass" body:"InitializeComponent();" parameters:"string name"` |
-| `update_constructor` | `target:"MyClass" body:"InitializeComponent(); Text = \"Hello\";"` — replaces body |
-| `delete_constructor` | `target:"MyClass"` — target is just the type name |
+| `update_constructor` | `target:"MyClass.ctor(string)" body:"Name = name;"` — updates specific overload |
+| `delete_constructor` | `target:"MyClass.ctor()"` — deletes specific overload |
 
 - `add_constructor` adds a NEW constructor. If one exists, you get CS0111 duplicate error.
 - To change existing constructor: use `update_constructor`, NOT delete+add.
-- Target format: just `"MyClass"` or `"MyClass.ctor"` — NOT `"MyClass.MyClass"`.
+- Target format: `"MyClass"`, `"MyClass.ctor"`, or `"MyClass.ctor(string,int)"` for specific overload.
+- `method_body`, `tree`, `block_body`, `add_statement` all work with `ctor` target.
+- Example: `cs action:"method_body" target:"MyClass.ctor"` — returns all constructor overloads.
+- Example: `cs action:"add_statement" target:"MyClass.ctor(string)" body:"Console.WriteLine(name);"` — adds to specific constructor.
+
+
+
+## Overload Resolution (v1.18.8+)
+
+
+When a class has multiple methods/constructors with the same name, use signature in target:
+
+```
+target: "Class.Method"              → single method (error if multiple overloads)
+target: "Class.Method(int,string)"  → specific overload by param types
+target: "Class.ctor"                → single constructor (error if multiple)
+target: "Class.ctor(string)"        → specific constructor overload
+target: "Class.ctor()"              → parameterless constructor
+```
+
+### Read operations (method_body, tree, parameters)
+- Multiple overloads without signature → returns **array** of all overloads with `hint` field
+- Each overload includes `filePath` (important for partial classes)
+- Use `hint` value as target for follow-up calls
+
+### Write operations (update_method, delete_method, update_constructor)
+- Multiple overloads without signature → **error** with list of available signatures
+- Must specify exact signature to update/delete
+
+### Partial classes
+- Overloads across different partial files are found automatically
+- Each result includes `filePath` showing which file contains that overload
+- Example: `Drive()` in Car.cs, `Drive(int)` in Car.Engine.cs — both found
+
+### Parameter matching
+- Match by type name only (not parameter names): `Process(string)` not `Process(string input)`
+- Short names work: `FolderInfo` matches `Graph.FolderInfo`
+- Comma-separated, no spaces needed: `(int,string)` or `(int, string)`
+
 
 ## Known Gotchas
+
 
 1. **Non-block if** — `if (x) return;` without braces cannot have statements inserted. Use `tree` to check if node has `children[]` before inserting.
 2. **add_else index** — `name` counts only if-statements (0-based), not all statements. Use `tree` to find the right if-index.
 3. **Partial classes (WinForms)** — `add_field`/`add_method` may go to `.Designer.cs` instead of `Form1.cs`. Use `filePath` parameter to target specific file.
 4. **validate_text** requires `filePath` parameter — always include it.
+5. **Overloaded methods** — without signature, read ops return array, write ops error. Always check hint field and use signature for writes.
+6. **update_property body vs value** — `body` converts to expression body (`=>`), `value` updates initializer (`=`). Use `value` for `{ get; set; } = "default"` properties.
+
 
 ## Key Principle: Always Verify
 

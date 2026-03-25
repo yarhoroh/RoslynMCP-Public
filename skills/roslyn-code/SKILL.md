@@ -65,6 +65,14 @@ get_xml_documentation { "symbolName": "<symbolName>", "symbolKind": "any" }
 get_full_context { "symbolName": "<symbolName>", "symbolKind": "any", "depth": 2, "maxNodes": 50 }
 ```
 
+### Overload behavior (v1.18.8+)
+
+`understand_method` and `get_method_body` return **all overloads** when multiple exist:
+- Single method → full result (signature, body, callers, callees)
+- Multiple overloads → `overloadCount` + `overloads[]` array with signature, parameters, file, line
+
+All tools work correctly with **partial classes** — members found across all partial declarations.
+
 ### understand_type vs get_type_info vs get_type_members
 
 | Tool | When to use |
