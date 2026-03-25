@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.18.9] - 2026-03-25
+
+### Fixed
+- `update_method` — body containing method name (e.g. `return GetAccessToken(false)`) no longer misdetected as full declaration
+- Events (`EventFieldDeclarationSyntax`) now visible in `cs tree` output
+- Added `EnumMember` and `Delegate` to `cs tree` output
+- `get_type_members` — returns disambiguation when multiple types share same name in different namespaces
+
+### Added
+- `delete_event` action with partial class support
+- `add_event` — documented `returnType` parameter for custom event types (e.g. `EventHandler<User>`)
+
 ## [1.18.8] - 2026-03-25
 
 ### Added
@@ -25,5 +37,3 @@
 - Read operations (method_body, tree, parameters) return array of all overloads with `hint` field for precise targeting
 - Write operations (update_method, delete_method) require signature when multiple overloads exist, error message lists available signatures
 - `HandleGetMethodBodyAsync` / `HandleUnderstandMethodAsync` return `Task<object>` to support both single result and overloads array
-
-
