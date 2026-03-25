@@ -9,6 +9,8 @@ https://www.youtube.com/watch?v=skvnHbm2lpk
 
 https://www.youtube.com/watch?v=6d6Kx-MnXOc
 
+https://www.youtube.com/watch?v=b3aIBrVaaQo
+
 ## Quick Start
 
 1. Install from [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=YaroslavHorokhov.RoslynMcp)

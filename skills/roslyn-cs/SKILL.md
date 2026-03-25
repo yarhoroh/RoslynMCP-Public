@@ -107,6 +107,7 @@ Example: `cs action:"add_method" target:"IMyInterface" body:"void Save(string na
 | `delete_constructor` | `target` (Type) |
 | `delete_field` | `target` (Type.Field) |
 | `delete_property` | `target` (Type.Property) |
+| `delete_event` | `target` (Type.EventName) |
 | `delete_class` | `target` |
 | `delete_attribute` | `target`, `name` |
 | `delete_block` | `target` (Type.Method), `name` (index/kind) |

@@ -25,3 +25,5 @@
 - Read operations (method_body, tree, parameters) return array of all overloads with `hint` field for precise targeting
 - Write operations (update_method, delete_method) require signature when multiple overloads exist, error message lists available signatures
 - `HandleGetMethodBodyAsync` / `HandleUnderstandMethodAsync` return `Task<object>` to support both single result and overloads array
+
+
