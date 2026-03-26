@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.18.11] - 2026-03-26
+
+### Added
+- **Universal `batch` tool** — execute multiple tools (cs, vs, reload_file, find_references, etc.) in ONE call. Stops on first error, returns results array.
+- **`cs action:"batch"`** — execute multiple cs actions in one call (create class + add fields/methods/usings). Auto-indexes new files via `EnsureNewFileInWorkspaceAsync`.
+- **`[JsonExtensionData]` on CsArgs** — unknown JSON properties no longer break parsing. Large method bodies parse correctly.
+
+### Fixed
+- **Proxy: VS without solution** — now shows VS instances even when no solution is open.
+- New files created by `cs create_*` immediately visible to subsequent actions.
+
 ## [1.18.10] - 2026-03-26
 
 
@@ -46,3 +57,5 @@
 - Read operations (method_body, tree, parameters) return array of all overloads with `hint` field for precise targeting
 - Write operations (update_method, delete_method) require signature when multiple overloads exist, error message lists available signatures
 - `HandleGetMethodBodyAsync` / `HandleUnderstandMethodAsync` return `Task<object>` to support both single result and overloads array
+
+

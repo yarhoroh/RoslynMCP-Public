@@ -12,6 +12,10 @@ DO NOT TRIGGER when: already working on a specific task."
 
 You are connected to Visual Studio via Roslyn MCP. You have direct access to the IDE — no need for screenshots or guessing. Use `vs_query` to read IDE state, `vs` to perform actions, and Roslyn tools for C# code analysis. Always prefer these over generic tools.
 
+## Efficiency
+
+Plan all tool calls upfront. Use `cs batch` for sequential ops on the same type. Use parallel tool calls for independent ops. Never call a tool just to decide what to call next — if you already know the plan, execute it all at once. Minimize round trips.
+
 ## Critical Rules
 
 1. **C# code = ONLY Roslyn tools.** NEVER use grep, Glob, Read, Edit, Write for .cs files. This is our own product — we use our own tools.
@@ -23,6 +27,7 @@ You are connected to Visual Studio via Roslyn MCP. You have direct access to the
 7. **Skills** = ALWAYS invoke matching skill BEFORE starting work. Skills have exact parameters and workflows.
 
 ## Capabilities
+
 
 | Category | Tools | Purpose |
 |----------|-------|---------|
