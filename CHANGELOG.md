@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.18.10] - 2026-03-26
+
+
+### Fixed
+- `update_statement` now supports replacing one statement with multiple statements
+- `change_type` now supports changing method/constructor parameter types via `Class.Method.paramName` syntax
+- `update_method` no longer misdetects method body as full declaration when body calls same-named method
+
+
 ## [1.18.9] - 2026-03-25
 
 ### Fixed
