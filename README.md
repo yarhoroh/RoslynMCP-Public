@@ -199,6 +199,23 @@ No other AI tool gives the AI model **direct programmatic access** to the Visual
 This enables the **self-development loop**: code → build → set breakpoint → debug → inspect → fix — all controlled by AI.
 
 
+
+### Scaffolding vs Refactoring
+
+When creating files from scratch, text-based tools write entire files in one call. RoslynMCP's `cs` tool trades raw speed for **compile-time safety** — every operation is validated by Roslyn before saving:
+
+| Task | Text-based tools | **RoslynMCP** | Faster |
+|---|---|---|---|
+| Create new class | `Write` — one call, instant | `cs batch` — create + add members + validate diagnostics | Text-based |
+| Create 5 classes | 5 parallel `Write` calls | 5 parallel `cs batch` calls — same parallelism, plus compile check | Text-based |
+| Add method to existing class | `Edit` — text diff, may break syntax | `cs add_method` — Roslyn-parsed, guaranteed valid | **RoslynMCP** |
+| Rename across solution | `Edit` multiple files, hope nothing breaks | `apply_rename` — compiler-resolved, updates all references | **RoslynMCP** |
+| Move statements inside method | Read → understand nesting → Edit | `cs update_statement` with block path — precise targeting | **RoslynMCP** |
+| Find all usages | `grep` — misses overloads, generics | `find_references` — 100% accurate from compiler | **RoslynMCP** |
+| Refactor + verify | Edit → build → fix errors → repeat | `cs` edit → instant diagnostics → done | **RoslynMCP** |
+
+**Trade-off:** Scaffolding from scratch is slightly slower because each `cs batch` call validates syntax via Roslyn compiler. The payoff: zero broken builds, zero missing references, zero syntax errors in generated code.
+
 ## License
 
 Starting from v1.18.6, RoslynMCP includes a **30-day free trial**. After the trial, a subscription is required.
