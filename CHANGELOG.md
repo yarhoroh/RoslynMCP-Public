@@ -1,5 +1,35 @@
 # Changelog
 
+## [1.18.13] - 2026-04-01
+
+### Added
+- **BlazorPilot** — new `blazor` tool with 35 actions for Blazor & web UI automation via Chrome DevTools Protocol (CDP). Full DevTools access with Roslyn C# integration.
+  - **Roslyn analysis:** `inspect` parses .razor files (components, events, @bind, state, methods with file:line), `list_pages` finds all Blazor routes
+  - **UI actions:** `click`, `click_by_text`, `type`, `press_key`, `select`, `select_by_text`, `hover`, `scroll`, `check/uncheck`, `wait`, `focus`, `clear` — real CDP Input clicks that work with Blazor EventCallbacks
+  - **Page observation:** `accessibility_tree` (with HTML snippets for interactive elements), `snapshot`, `screenshot` (full page or element)
+  - **DevTools:** `console` logs, `network` requests with status codes and errors, `cookies`, `storage` (localStorage/sessionStorage)
+  - **CSS & inspection:** `css` (get/set computed styles), `element_state` (visible, enabled, rect, attrs), `highlight` (visual red overlay), `count` elements
+  - **Emulation:** `viewport` (mobile/tablet responsive testing), `emulate` (dark/light mode), `performance` metrics
+  - **Smart features:** `click_by_text` searches overlays/modals first; `select` auto-detects value vs text match; auto-CDP port configuration in launchSettings.json
+  - Works with **Blazor Desktop** (WebView2/MAUI), **Blazor Server/WASM**, and **any website** in Chrome/Edge
+
+
+### Fixed
+
+- **find_references** — added `containingType` parameter for precise symbol resolution. Previously, searching for a common property name (e.g. `Name`) returned references from ALL types with that member. Now you can filter: `find_references symbolName:"Name" containingType:"Animal"` to get only references to `Animal.Name`. Matches ReSharper "Find Usages" precision.
+
+## [1.18.12] - 2026-03-27
+ 
+### Added
+- **`cs action:"create_file"`** — create .cs file from full source code in one call. Validates syntax via Roslyn, formats, saves, and indexes in workspace. Fastest way to scaffold new files with compile-time safety.
+- **cs tool fallback** — unknown cs actions (e.g. `get_type_info`) automatically redirect to matching Roslyn tools instead of returning error.
+
+### Fixed
+- **`create_class`/`create_type` overwrite protection** — previously, calling `create_class` with a `filePath` pointing to an existing file would silently overwrite it, destroying the original code. Now returns a clear error: "File already exists. Use add_method/add_field to modify the existing type."
+- **JSON parser resilience** — when LLM sends cs tool arguments as a string (instead of JSON object), it sometimes appends XML tags like `</invoke>` at the end, breaking JSON parsing. Now `ParseCsArgs` trims any trailing content after the last `}` before parsing.
+- **VS instance switching** — `switch_instance` with direct port now skips full scan (instant, no hang). VS instances without a solution are now visible in `list_instances` without opening the Dashboard. No-solution VS supports `vs`/`vs_query` tools to open a solution via `open_solution`.
+- **`md` tool `insert_section`** — fixed insertion position: section now inserts exactly where specified (`after` heading), not at wrong location.
+
 ## [1.18.11] - 2026-03-26
 
 ### Added
@@ -57,5 +87,6 @@
 - Read operations (method_body, tree, parameters) return array of all overloads with `hint` field for precise targeting
 - Write operations (update_method, delete_method) require signature when multiple overloads exist, error message lists available signatures
 - `HandleGetMethodBodyAsync` / `HandleUnderstandMethodAsync` return `Task<object>` to support both single result and overloads array
+
 
 

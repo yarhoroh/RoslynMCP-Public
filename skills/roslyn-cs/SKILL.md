@@ -37,8 +37,10 @@ no_trigger: Read-only code analysis without modifications (use roslyn-code), non
 ## Actions Reference
 
 ### Create
+
 | Action | Required | Optional |
 |--------|----------|----------|
+| `create_file` | `filePath`, `body` (full C# source) | **Fastest way to scaffold new files.** Use when creating a new file in a new or existing project — writes full source, validates via Roslyn, formats, saves and indexes in one call. Faster than `create_class` + `add_method` chain. |
 | `create_class` | `name` | `namespace`, `filePath`, `modifiers`, `baseTypes` |
 | `create_interface` | `name` | `namespace`, `filePath` |
 | `create_struct` | `name` | `namespace`, `filePath` |
@@ -46,6 +48,7 @@ no_trigger: Read-only code analysis without modifications (use roslyn-code), non
 | `create_enum` | `name` | `namespace`, `filePath` |
 | `create_delegate` | `name`, `returnType`, `parameters` | `namespace`, `filePath` |
 | `create_partial` | `target` (existing type), `filePath` | — |
+
 
 ### Add members
 
@@ -192,7 +195,7 @@ Type.Method.switch[0].case[1]    → second case
 
 ### Universal Batch (`batch` tool)
 
-Combine ANY tools in one call. All independent tool calls (cs, vs, reload_file, find_references, etc.) can run in a single batch — never call them one-by-one:
+Combine ANY tools in one call — cs, vs, vs_query, reload_file, find_references, md, screen, memory_*, etc. Executed sequentially, stops on first error. Never call independent tools one-by-one when they can be batched:
 
 ```json
 {"tool": "batch", "args": {"actions": [
@@ -201,9 +204,15 @@ Combine ANY tools in one call. All independent tool calls (cs, vs, reload_file, 
 ]}}
 ```
 
+
 ## Workflow: Build a class
 
-**ALWAYS use `cs batch`.** Never add members one-by-one. One batch = one class:
+**For scaffolding (new files from scratch):** use `create_file` — fastest, one call with full C# source:
+```
+cs action:"create_file" filePath:"Models/Order.cs" body:"using System;\nnamespace MyApp;\npublic class Order\n{\n    public int Id { get; set; }\n    public string Name { get; set; } = string.Empty;\n}"
+```
+
+**For structured creation (need control over each member):** use `cs batch`:
 
 ```
 cs action:"batch" actions:[

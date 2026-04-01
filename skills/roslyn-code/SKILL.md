@@ -92,6 +92,7 @@ All tools work correctly with **partial classes** — members found across all p
 // All usages of a symbol (reads, writes, assignments)
 find_references {
   "symbolName": "<symbolName>",
+  "containingType": "<typeName>",
   "symbolKind": "any",
   "includeContext": true,
   "groupBy": "typeAndMember",

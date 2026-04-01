@@ -46,7 +46,7 @@ Works with any AI client that supports the [Model Context Protocol](https://mode
 ### Core Features
 
 #### Roslyn Code Analysis
-- **130+ tools** loaded on-demand via `search_tools` → `call_tool`
+- **160+ tools** loaded on-demand via `search_tools` → `call_tool`
 - **Navigation:** `find_references`, `find_definition`, `find_callers`, `find_callees`, `find_implementations`, `find_overrides`
 - **Understanding:** `understand_type`, `understand_method`, `get_type_info`, `get_type_members`, `get_method_body`
 - **Diagnostics:** `get_errors`, `get_warnings`, `validate_text`, `find_async_issues`, `find_performance_issues`
@@ -89,6 +89,38 @@ Works with any AI client that supports the [Model Context Protocol](https://mode
 - `ui_set_value` / `ui_get_value` / `ui_table` — read/write form fields, read data grids
 - `ui_expand` / `ui_select` — expand/collapse tree nodes, select items in lists and combo boxes
 - Works with WinForms, WPF, Win32 apps. Partial support for Electron apps (Teams, Slack, WhatsApp).
+#### BlazorPilot — Blazor & Web UI Automation (NEW)
+
+AI-driven browser automation via Chrome DevTools Protocol (CDP) + Roslyn code analysis. Full DevTools access with Roslyn C# integration. **No screenshots needed** — AI reads the page as structured text and interacts with elements directly.
+
+**Works with:**
+- **Blazor Desktop** (WebView2 / MAUI / WPF) — add to your `launchSettings.json`:
+  ```json
+  "environmentVariables": {
+      "WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS": "--remote-debugging-port=9222"
+  }
+  ```
+- **Blazor Server / WASM** — launch browser with `--remote-debugging-port=9222` and your app URL
+- **Any website** in Chrome/Edge — launch with `chrome --remote-debugging-port=9222 --user-data-dir=<temp> <url>`
+
+**35 actions in one `blazor` tool:**
+
+| Category | Actions |
+|----------|---------|
+| Roslyn analysis | `inspect` (.razor components, events, @bind, state, methods → C# file:line), `list_pages` |
+| UI actions | `click`, `click_by_text`, `type`, `press_key`, `select`, `hover`, `scroll`, `check/uncheck`, `wait`, `focus`, `clear` |
+| Page observation | `accessibility_tree` (with HTML snippets), `snapshot`, `screenshot` (full page or element) |
+| DevTools | `console` logs, `network` requests with status codes, `cookies`, `storage` |
+| CSS & inspection | `css` (get/set styles), `element_state`, `highlight`, `count` |
+| Emulation | `viewport` (mobile/tablet), `emulate` (dark/light mode), `performance` metrics |
+| Navigation | `navigate`, `eval` (JavaScript), `connect`, `disconnect` |
+
+**Key capabilities:**
+- Real browser clicks via CDP — works with Blazor EventCallbacks (not just JS `.click()`)
+- `click_by_text` with smart overlay/modal detection — finds buttons in popups first
+- Enhanced `accessibility_tree` includes HTML snippets for interactive elements
+- `inspect` combines Roslyn static analysis with runtime browser state — AI sees both the UI and the C# handler behind each button
+- `console` and `network` capture logs and HTTP requests in real-time with status codes and errors
 
 #### Memory & Knowledge Base
 - `memory_*` (17 tools) — persistent cross-session memory with vector search (ONNX)
