@@ -1,5 +1,34 @@
 # Changelog
 
+
+## [1.18.14] - 2026-04-01
+
+### Added
+- **MD Index**: Multi-file markdown indexing with hybrid search (FTS5 + ONNX embeddings)
+  - `md action:"index"` — on-demand indexing of all .md files in a directory (recursive)
+  - `md action:"search_all"` — hybrid search: FTS5 keyword matching + semantic vector search (ONNX embeddings)
+  - `md action:"stats"` — index statistics (files, sections, size)
+  - Hierarchical section tree with `treePath` (e.g. `Doc/Chapter/Section`)
+  - On-demand: indexes only changed files (lastModified check), cleans up deleted files
+  - Auto-reindex: editing via md tool automatically updates index (FTS + vectors)
+  - Uses `winsqlite3.dll` (Windows built-in) for FTS5 support in VSIX context
+  - Excludes `bin/`, `obj/`, `node_modules/`, `.git/`, `.vs/` from indexing
+  - Robust query sanitization: handles any input (versions, URLs, special chars, any language)
+- **MD Tree-first creation**: structured document creation without thinking about `#` levels
+  - `md action:"create_doc"` — create new .md with title
+  - `md action:"add_node"` — add section under parent, auto heading level
+  - `md action:"bulk_create"` — create entire document from indented tree spec in one call
+  - `md action:"tree"` — hierarchical tree view with children[] and treePath
+  - `md action:"rename_node"` — rename section heading
+  - `md action:"move_node"` — move section to different parent, auto-adjusts heading levels
+- **SQLite migration**: Added `Microsoft.Data.Sqlite.Core` + `SQLitePCLRaw.provider.winsqlite3` for FTS5
+  - `System.Data.SQLite` remains for existing DevGraphDb/TestCaseService (no breaking changes)
+  - `AssemblyResolve` handler for VSIX native DLL loading
+
+### Fixed
+- `vs_query what:"errors"` now returns only errors (was returning errors + warnings mixed)
+- `vs_query what:"warnings"` now returns only warnings
+
 ## [1.18.13] - 2026-04-01
 
 ### Added

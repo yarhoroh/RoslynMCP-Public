@@ -264,3 +264,11 @@ Step 5: ai_freeform → "Wait for user confirmation, then submit"
 - Schema version: 2 (with annotations + progress tables)
 - Persists across VS restarts and sessions
 - Each solution has its own workflow database
+
+### All RoslynMCP databases (`.roslyn-mcp/` directory)
+| Database | Purpose | SQLite Provider |
+|----------|---------|----------------|
+| `memory.db` | Memory system + DevGraph + sessions | System.Data.SQLite |
+| `testcases.db` | Workflow engine (wf_* tools) | System.Data.SQLite |
+| `md_index.db` | Markdown multi-file FTS5 index | Microsoft.Data.Sqlite (winsqlite3) |
+

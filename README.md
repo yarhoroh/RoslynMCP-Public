@@ -89,6 +89,7 @@ Works with any AI client that supports the [Model Context Protocol](https://mode
 - `ui_set_value` / `ui_get_value` / `ui_table` — read/write form fields, read data grids
 - `ui_expand` / `ui_select` — expand/collapse tree nodes, select items in lists and combo boxes
 - Works with WinForms, WPF, Win32 apps. Partial support for Electron apps (Teams, Slack, WhatsApp).
+
 #### BlazorPilot — Blazor & Web UI Automation (NEW)
 
 AI-driven browser automation via Chrome DevTools Protocol (CDP) + Roslyn code analysis. Full DevTools access with Roslyn C# integration. **No screenshots needed** — AI reads the page as structured text and interacts with elements directly.
@@ -146,7 +147,13 @@ AI-driven browser automation via Chrome DevTools Protocol (CDP) + Roslyn code an
 
 
 #### Markdown Tool
-- `md` — structured .md editing (9 actions): `toc`, `read`, `read_section`, `search`, `edit_section`, `insert_section`, `append`, `delete_section`, `replace`
+
+- `md` — structured .md editing & multi-file search (18 actions)
+  - **Single-file**: `toc`, `tree`, `read`, `read_section`, `search`, `edit_section`, `insert_section`, `append`, `delete_section`, `replace`
+  - **Tree-first creation**: `create_doc`, `add_node`, `bulk_create`, `rename_node`, `move_node` — create documents as a tree, auto heading levels
+  - **Multi-file index**: `index`, `search_all`, `stats` — hybrid search: SQLite FTS5 (keywords) + ONNX embeddings (semantic)
+  - On-demand indexing: only re-indexes changed files, auto-cleans deleted, auto-reindex on edit
+
 
 #### DevGraph
 - `graph_*` (10 tools) — track changes, dependencies, cause-effect during development
@@ -195,9 +202,9 @@ RoslynMCP creates databases in `.roslyn-mcp/` inside your solution directory:
 |------|----------|
 | `memory.db` | Memory, Knowledge Base, DevGraph, configuration |
 | `testcases.db` | AI Workflow Engine: workflows, steps, run history |
+| `md_index.db` | Markdown multi-file FTS5 index (sections, hierarchy, full-text search) |
 
 License data is stored in `%AppData%/RoslynMcp/`.
-
 
 ## RoslynMCP vs Other AI IDE Integrations
 
