@@ -223,6 +223,34 @@ vs { "action": "detach" }
 // Detach debugger from process (process keeps running)
 ```
 
+
+### Debug — Attach / Immediate
+
+
+```json
+vs { "action": "attach_to_process", "target": "12345" }
+// Programmatic attach-by-pid — no UI dialog. target = PID as string.
+// Options: {"break": true} to break immediately after attach.
+
+vs { "action": "attach_to_process", "target": "12345", "options": { "break": true } }
+// Attach + break into debugger on arrival.
+
+vs { "action": "execute_immediate", "target": "System.GC.Collect(2, System.GCCollectionMode.Forced); System.GC.WaitForPendingFinalizers(); System.GC.Collect();" }
+// Execute arbitrary C# statement in the Immediate Window.
+// Debugger MUST be in Break mode — attach + break first.
+// Options: {"timeout": 10000} in ms.
+```
+
+**Force-GC pattern** (useful for `diag` leak-hunt):
+```
+1. vs attach_to_process target:"<pid>" options:{break:true}
+2. vs execute_immediate target:"System.GC.Collect(2, System.GCCollectionMode.Forced); System.GC.WaitForPendingFinalizers(); System.GC.Collect();"
+3. vs continue
+4. vs detach
+5. diag snapshot_create pid:<pid> label:"post-gc"
+```
+
+
 ### Debug — Stepping
 
 > **Sync-by-default (v1.18.6+):** All stepping commands WAIT for the debugger to stop

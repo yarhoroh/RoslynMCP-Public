@@ -1,9 +1,35 @@
 # Changelog
 
 
+
+## [1.18.15] - 2026-04-17
+
+
+### Added
+- **`diag` tool — ClrMD-based memory/heap diagnostics (25 actions)**: programmatic leak hunting for any live .NET process (Framework 4.x, Core, .NET 5+).
+  - **Snapshot lifecycle (async + polling)**: `snapshot_create` (MiniDumpWriteDump with FullMemory, returns immediately with `status:"writing"`), `snapshot_info` (poll for ready/failed/writing), `snapshot_list`, `snapshot_rename`, `snapshot_delete`, `snapshot_cleanup` (TTL-based)
+  - **Process discovery**: `find_process` with 5 matching strategies (pid / processName / assemblyName / windowTitle / typeName). Permissive: accepts any combination.
+  - **Heap analysis**: `type_stats` (top N by size/count/name with pagination + filter), `instance_count`, `compare_snapshots` (diff by type with added/removed/grew/shrunk + hints), `find_roots` (reverse ref map + BFS to GC root, multi-level retention chains)
+  - **Object inspection**: `object_info` (fields with values), `string_value`, `array_preview`, `event_subscriptions` (delegate/EventHandler field walk)
+  - **GC diagnostics**: `gc_stats` (Gen0/1/2/LOH/POH/Frozen breakdown), `finalizer_queue` (top types waiting for finalization)
+  - **WinForms-specific**: `live_forms`, `live_controls` (walks type hierarchy looking for System.Windows.Forms.Form/Control)
+  - **Advanced**: `static_holders` (static root references to a type), `trace_object` (cross-snapshot identity via Handle/field-fingerprint), `leak_hunt` (guided workflow), `cef_state` (CefSharp ChromiumWebBrowser inventory + pinned StrongHandles + `Cef.IsInitialized`), `dispose_orphans` (heuristic scan for IDisposable with disposed parent — catch-all for dispose-chain bugs), `force_gc` (composite: attach + Immediate `GC.Collect(2,Forced)` + detach — eliminates GC-lag ghosts before compare)
+  - **Cross-process snapshot safety**: `compare_snapshots` and `trace_object` refuse differing PIDs; `snapshot_list` surfaces `distinctPids` with warning
+  - **Architecture**: snapshots persisted under `.roslyn-mcp/snapshots/` (`.dmp` + `.meta.json`), all work done server-side, AI receives only aggregated/paginated/hinted JSON
+  - **NuGet**: `Microsoft.Diagnostics.Runtime` 3.1.456901 (netstandard2.0)
+  - Skill: `/roslyn-diag` for workflow guidance
+- **`vs` tool — new debug actions**:
+  - `attach_to_process` — programmatic attach by PID via DTE (no UI dialog). Options: `{break: true}` to break immediately after attach.
+  - `execute_immediate` — run arbitrary C# statement in the Immediate Window while debugger is in Break mode. Enables `GC.Collect`, expression evaluation, state inspection from AI.
+  - Force-GC pattern documented in `roslyn-vs` and `roslyn-diag` skills.
+- **Auto-cleanup of snapshot dumps on VS shutdown**: `.dmp` files in `<solutionDir>/.roslyn-mcp/snapshots/` are automatically deleted when Visual Studio closes (`.meta.json` kept for history). Prevents multi-GB accumulation across sessions.
+
+
+
 ## [1.18.14] - 2026-04-01
 
 ### Added
+
 - **MD Index**: Multi-file markdown indexing with hybrid search (FTS5 + ONNX embeddings)
   - `md action:"index"` — on-demand indexing of all .md files in a directory (recursive)
   - `md action:"search_all"` — hybrid search: FTS5 keyword matching + semantic vector search (ONNX embeddings)

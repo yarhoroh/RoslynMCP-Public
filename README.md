@@ -11,6 +11,26 @@ https://www.youtube.com/watch?v=6d6Kx-MnXOc
 
 https://www.youtube.com/watch?v=b3aIBrVaaQo
 
+
+## What's in the box
+
+- **Roslyn code analysis** — references, types, methods, errors, rename, validate, search (~90 tools)
+- **OOP C# programming** (`cs`) — 86+ actions for code creation/editing
+- **Visual Studio IDE control** (`vs`, `vs_query`) — build, debug, breakpoints, find/replace, deploy, tests, programmatic **attach-to-pid**, Immediate Window
+- **Memory / heap diagnostics** (`diag`) — ClrMD-based leak hunting, 25 actions (snapshots async, compare/find_roots, CEF state, dispose orphans, force_gc), cross-process safety, auto-cleanup on VS shutdown
+- **Desktop automation & UIA** (`screen`) — screenshots, mouse, keyboard, windows, processes
+- **Debug monitor** (`debug_monitor`) — live app state, dialogs, waitFor
+- **Markdown editing** (`md`) — structured editing + multi-file FTS5 search
+- **BlazorPilot** (`blazor`) — Blazor/Web UI automation via CDP + Roslyn
+- **Memory** (`memory_*`) — cross-session context
+- **Knowledge base** (`kb_*`) — permanent notes & docs
+- **Workflow engine** (`wf_*`) — reusable step-by-step automation (27 tools)
+- **DevGraph** — change + dependency tracking
+- **Test runner** — VS Test Explorer integration
+- **Dashboard** — VS tool window for memory/KB/tests/connection
+
+Plus: `get_tool_schema`, `search_tools`, `call_tool`, `list_instances`, `switch_instance` for tool discovery and multi-VS routing.
+
 ## Quick Start
 
 1. Install from [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=YaroslavHorokhov.RoslynMcp)
@@ -122,6 +142,28 @@ AI-driven browser automation via Chrome DevTools Protocol (CDP) + Roslyn code an
 - Enhanced `accessibility_tree` includes HTML snippets for interactive elements
 - `inspect` combines Roslyn static analysis with runtime browser state — AI sees both the UI and the C# handler behind each button
 - `console` and `network` capture logs and HTTP requests in real-time with status codes and errors
+
+
+#### Memory Diagnostics (`diag` tool)
+
+
+Programmatic memory leak hunting for live .NET processes — Framework 4.x, Core, .NET 5+, ASP.NET, WinForms, WPF, Blazor. AI drives the full leak-hunt cycle autonomously; no JetBrains dotMemory needed.
+
+**25 actions via single `diag` endpoint:**
+- **Snapshot lifecycle**: `snapshot_create` (async via MiniDumpWriteDump), `snapshot_info` (polling), `snapshot_list` / `_rename` / `_delete` / `_cleanup`
+- **Process discovery**: `find_process` by pid / processName / assemblyName / windowTitle / typeName (permissive — any combination)
+- **Heap analysis**: `type_stats`, `instance_count`, `compare_snapshots` (diff with hints), `find_roots` (8-level retention chains to GC root)
+- **Object inspection**: `object_info`, `string_value`, `array_preview`, `event_subscriptions`
+- **GC diagnostics**: `gc_stats` (Gen0/1/2/LOH/POH), `finalizer_queue`
+- **WinForms**: `live_forms`, `live_controls`
+- **Advanced**: `static_holders`, `trace_object` (cross-snapshot identity), `leak_hunt` (guided workflow), `cef_state` (CefSharp browsers + pinned StrongHandles + `Cef.IsInitialized`), `dispose_orphans` (IDisposable with disposed parent), `force_gc` (attach + Immediate `GC.Collect` + detach composite)
+
+**Key properties:**
+- All work server-side (AI never reads raw heap dumps)
+- Snapshots persisted under `.roslyn-mcp/snapshots/` (·dmp + ·meta.json)
+- Paginated, filtered responses with AI-targeted `hints`
+- Async snapshot with status polling (`writing` → `ready` → `failed`)
+- Uses ClrMD 3.x (`Microsoft.Diagnostics.Runtime` 3.1+)
 
 #### Memory & Knowledge Base
 - `memory_*` (17 tools) — persistent cross-session memory with vector search (ONNX)
